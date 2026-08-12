@@ -218,7 +218,7 @@
           <i class="fa-solid fa-user-shield mr-1"></i> Admin Portal
         </button>
         <button id="btn-login-partner" onclick="switchLoginMode('partner')" class="flex-1 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 transition">
-          <i class="fa-solid fa-store mr-1"></i> Partner Cashier
+          <i class="fa-solid fa-store mr-1"></i> Business Partners
         </button>
       </div>
 
@@ -248,7 +248,7 @@
         </button>
       </form>
 
-      <!-- Form: Partner Cashier (NO PRE-FILLED DEFAULT VALUES) -->
+      <!-- Form: Business Partners (NO PRE-FILLED DEFAULT VALUES) -->
       <form id="form-partner" onsubmit="handlePartnerLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Select Partner Business</label>
@@ -597,9 +597,6 @@
         <button onclick="savePassLocal()" class="px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 text-white font-black text-xs shadow-md hover:bg-slate-900 transition flex items-center gap-2">
           <i class="fa-solid fa-download"></i> Save (JPG)
         </button>
-        <button id="btn-save-drive" onclick="savePassToDrive()" class="px-5 py-2.5 rounded-xl bg-pup-gold text-pup-maroon font-black text-xs shadow-md hover:bg-yellow-500 transition flex items-center gap-2">
-          <i class="fa-brands fa-google-drive"></i> Save to Drive
-        </button>
       </div>
     </div>
   </div>
@@ -830,23 +827,6 @@
 
   <script>
     window.activeTab = 'roster';
-
-    async function savePassToDrive() {
-        const card = document.getElementById('printable-id-card');
-        const name = document.getElementById('pass-card-name').innerText;
-        const id = document.getElementById('pass-card-id').innerText;
-        const sem = document.getElementById('pass-card-sem').innerText;
-        
-        const filename = formatFilename(name, id, sem);
-
-        try {
-            const dataUrl = await htmlToImage.toJpeg(card, { quality: 0.95, pixelRatio: 2 });
-            alert("Saving " + filename + " to Google Drive via OAuth is being configured...");
-        } catch (error) {
-            console.error('Oops, something went wrong!', error);
-            alert("Failed to process image for Drive.");
-        }
-    }
 
 
 
