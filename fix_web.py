@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import os
+
+html_code = """<!DOCTYPE html>
 <html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
@@ -32,19 +34,21 @@
   <style>
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     
+    /* Custom Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(128, 0, 0, 0.2); border-radius: 999px; }
     .dark ::-webkit-scrollbar-thumb { background: rgba(255, 193, 7, 0.2); }
 
-    /* ID PASS CARD EXACT REPLICA DESIGN (IMAGE 3) */
+    /* ID Pass Card Pixel-Perfect Exact Replica Design */
     .id-pass-card {
       width: 100%;
       max-width: 680px;
       aspect-ratio: 1.586 / 1;
-      background: linear-gradient(180deg, #2D0202 0%, #170101 100%);
-      border-radius: 20px;
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.7);
+      background: linear-gradient(180deg, #2D0202 0%, #1A0101 100%);
+      border: 2px solid #FFC107;
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
       color: #FFFFFF;
       position: relative;
       overflow: hidden;
@@ -58,28 +62,27 @@
     .id-pass-header-banner {
       background-color: #800000;
       border-bottom: 3px solid #FFC107;
-      padding: 14px 24px;
+      padding: 12px 20px;
     }
 
     .id-pass-body {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
+      gap: 20px;
       flex: 1;
-      padding: 18px 28px;
+      padding: 16px 24px;
     }
 
     .id-pass-info {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
-      height: 100%;
+      gap: 10px;
     }
 
     .id-pass-label {
-      font-size: 11px;
+      font-size: 10.5px;
       letter-spacing: 0.08em;
       color: #D4AF37;
       font-weight: 700;
@@ -88,54 +91,43 @@
     }
 
     .id-pass-val {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
       color: #FFFFFF;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .id-pass-badge {
       display: inline-flex;
       align-items: center;
-      padding: 5px 16px;
+      padding: 4px 14px;
       border-radius: 999px;
       border: 1.5px solid #10B981;
       background: rgba(16, 185, 129, 0.12);
       color: #34D399;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       width: fit-content;
+      margin-top: 2px;
     }
 
     .id-pass-qr-frame {
+      background: #FFFFFF;
+      border: 2px solid #FFC107;
+      border-radius: 14px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-    }
-
-    .id-pass-qr-box {
-      background: #FFFFFF;
-      border: 2px solid #FFC107;
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-    }
-
-    .id-pass-qr-label {
-      font-size: 10px;
-      font-weight: 800;
-      color: #FFC107;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
     .id-pass-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 10px 24px;
-      font-size: 10.5px;
-      color: rgba(255, 255, 255, 0.75);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 20px;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.7);
       text-align: center;
       letter-spacing: 0.02em;
     }
@@ -181,20 +173,20 @@
         </button>
       </div>
 
-      <!-- Form: Admin (NO PRE-FILLED DEFAULT VALUES) -->
+      <!-- Form: Admin -->
       <form id="form-admin" onsubmit="handleAdminLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Username</label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-            <input type="text" id="admin-user" required value="" placeholder="Enter username" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
+            <input type="text" id="admin-user" required placeholder="Enter admin username" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
           </div>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Password</label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-            <input type="password" id="admin-pass" required value="" placeholder="Enter password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
+            <input type="password" id="admin-pass" required placeholder="Enter password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
           </div>
         </div>
         <div id="admin-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-red-900"></div>
@@ -203,17 +195,17 @@
         </button>
       </form>
 
-      <!-- Form: Partner Cashier (NO PRE-FILLED DEFAULT VALUES) -->
+      <!-- Form: Partner Cashier -->
       <form id="form-partner" onsubmit="handlePartnerLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Select Partner Business</label>
           <select id="partner-select" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-gold">
-            <option value="">Select a Partner Store...</option>
+            <option value="">Loading partners...</option>
           </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">4-Digit Access PIN</label>
-          <input type="password" id="partner-pin" maxlength="4" value="" placeholder="PIN" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-lg text-center font-mono tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-pup-gold">
+          <input type="password" id="partner-pin" maxlength="4" placeholder="PIN" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-lg text-center font-mono tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-pup-gold">
         </div>
         <div id="partner-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-red-900"></div>
         <button type="submit" class="w-full bg-pup-gold hover:bg-yellow-500 text-pup-maroon font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
@@ -254,18 +246,13 @@
           </div>
 
           <!-- Dark Mode Toggle -->
-          <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-800 text-yellow-300 flex items-center justify-center transition" title="Toggle Theme">
+          <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-800 text-yellow-300 flex items-center justify-center transition">
             <i class="fa-solid fa-moon dark:hidden"></i>
             <i class="fa-solid fa-sun hidden dark:block"></i>
           </button>
 
-          <!-- Settings Button -->
-          <button onclick="openModal('modal-settings')" class="w-9 h-9 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-800 text-yellow-300 flex items-center justify-center transition" title="Settings & DB Status">
-            <i class="fa-solid fa-gear"></i>
-          </button>
-
-          <!-- Logout Button -->
-          <button onclick="logout()" class="px-3 py-1.5 rounded-xl bg-red-900/60 hover:bg-red-800 border border-red-700 text-white text-xs font-bold transition flex items-center gap-1.5" title="Logout">
+          <!-- Logout -->
+          <button onclick="logout()" class="px-3 py-1.5 rounded-xl bg-red-900/60 hover:bg-red-800 border border-red-700 text-white text-xs font-bold transition flex items-center gap-1.5">
             <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
           </button>
         </div>
@@ -336,19 +323,14 @@
           </div>
         </div>
 
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-12 h-12 shrink-0 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl font-bold">
-              <i class="fa-solid fa-bolt"></i>
-            </div>
-            <div class="truncate">
-              <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Total Scans</p>
-              <h3 id="stat-total-scans" class="text-xl font-extrabold text-slate-800 dark:text-slate-100">0</h3>
-            </div>
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl font-bold">
+            <i class="fa-solid fa-bolt"></i>
           </div>
-          <button onclick="confirmClearScanLogs()" title="Clear All Scan Logs" class="shrink-0 p-2.5 rounded-xl bg-slate-100 dark:bg-pup-darkCard text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/80 dark:hover:text-red-400 border border-slate-200 dark:border-red-900/40 transition admin-only">
-            <i class="fa-solid fa-trash-can text-sm"></i>
-          </button>
+          <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Total Scans</p>
+            <h3 id="stat-total-scans" class="text-xl font-extrabold text-slate-800 dark:text-slate-100">0</h3>
+          </div>
         </div>
       </div>
 
@@ -493,10 +475,10 @@
         
         <!-- Header Banner -->
         <div class="id-pass-header-banner">
-          <div class="text-[14px] font-black tracking-wider text-pup-gold uppercase">
+          <div class="text-[13px] font-black tracking-wider text-pup-gold uppercase">
             JUNIOR MARKETING ASSOCIATION OF THE PHILIPPINES
           </div>
-          <div class="text-[11px] font-bold tracking-wider text-white uppercase mt-0.5">
+          <div class="text-[10px] font-extrabold tracking-widest text-white uppercase mt-0.5">
             PUP SANTA ROSA • OFFICIAL MEMBER PASS
           </div>
         </div>
@@ -529,10 +511,8 @@
 
           <!-- QR Code Container -->
           <div class="id-pass-qr-frame">
-            <div class="id-pass-qr-box">
-              <canvas id="pass-card-qr" class="w-36 h-36"></canvas>
-            </div>
-            <span class="id-pass-qr-label">SCAN TO VALIDATE</span>
+            <canvas id="pass-card-qr" class="w-36 h-36"></canvas>
+            <span class="text-[9px] font-extrabold text-pup-maroon tracking-wider mt-1.5 uppercase">SCAN TO VALIDATE</span>
           </div>
         </div>
 
@@ -569,23 +549,23 @@
         <input type="hidden" id="stu-doc-id">
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Student ID (PUP Format)</label>
-          <input type="text" id="stu-id" required value="" placeholder="e.g. 2026-00101-SR-0" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-id" required placeholder="2026-00101-SR-0" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Full Name</label>
-          <input type="text" id="stu-name" required value="" placeholder="Full Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-name" required placeholder="Full Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">PUP Webmail</label>
-          <input type="email" id="stu-email" value="" placeholder="student@iskolarngbayan.pup.edu.ph" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="email" id="stu-email" placeholder="student@iskolarngbayan.pup.edu.ph" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Department / Program</label>
-          <input type="text" id="stu-dept" value="" placeholder="BSBA - Marketing Management" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-dept" placeholder="BSBA - Marketing Management" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Active Semester</label>
-          <input type="text" id="stu-sem" value="" placeholder="2026-2027 | 1st Semester" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-sem" placeholder="2026-2027 | 1st Semester" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div class="flex items-center gap-2 pt-2">
           <input type="checkbox" id="stu-paid" class="w-4 h-4 accent-pup-maroon rounded" checked>
@@ -615,15 +595,15 @@
         <input type="hidden" id="store-doc-id">
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Store Name</label>
-          <input type="text" id="store-name" required value="" placeholder="Store Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="store-name" required placeholder="Store Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Category</label>
-          <input type="text" id="store-cat" value="" placeholder="Food & Beverage" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="store-cat" placeholder="Food & Beverage" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">4-Digit Access PIN</label>
-          <input type="text" id="store-pin" maxlength="4" required value="" placeholder="1234" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-lg text-center font-mono tracking-widest focus:outline-none">
+          <input type="text" id="store-pin" maxlength="4" required placeholder="1234" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-lg text-center font-mono tracking-widest focus:outline-none">
         </div>
 
         <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-red-950/60 pt-4 mt-4">
@@ -654,7 +634,7 @@
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Discount Title</label>
-          <input type="text" id="vouch-title" required value="" placeholder="e.g. 10% Off All Orders" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="vouch-title" required placeholder="e.g. 10% Off All Orders" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Description</label>
@@ -671,60 +651,6 @@
 
 
   <!-- ==================== FIREBASE & APPLICATION LOGIC ==================== -->
-  
-  <!-- ==================== SETTINGS & DB STATUS MODAL ==================== -->
-  <div id="modal-settings" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 space-y-5">
-      
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
-        <h3 class="font-bold text-lg text-pup-maroon dark:text-pup-gold flex items-center gap-2">
-          <i class="fa-solid fa-gear"></i> Settings & Database Status
-        </h3>
-        <button onclick="closeModal('modal-settings')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-pup-darkCard text-slate-500 dark:text-slate-300 flex items-center justify-center hover:bg-slate-200 transition">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <!-- Firebase DB Status Card -->
-      <div class="bg-slate-50 dark:bg-pup-darkCard p-4 rounded-2xl border border-slate-200 dark:border-red-900/40 space-y-3">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Firebase Firestore</span>
-          <div id="db-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="db-status-text">Active / Connected</span>
-          </div>
-        </div>
-
-        <div class="text-xs space-y-1.5 text-slate-500 dark:text-slate-400 font-medium pt-1">
-          <div class="flex justify-between">
-            <span>Project ID:</span>
-            <span class="font-mono text-slate-800 dark:text-slate-200 font-bold">pupsrc-jmap-qrcodescanner</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Sync Engine:</span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">Realtime Web Listeners Active</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Current Role:</span>
-            <span id="settings-user-role" class="font-bold text-pup-maroon dark:text-pup-gold">Administrator</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="pt-2 border-t border-slate-200 dark:border-red-950/60 space-y-2">
-        <button onclick="confirmClearScanLogs(); closeModal('modal-settings');" class="w-full bg-slate-100 dark:bg-pup-darkCard hover:bg-red-50 dark:hover:bg-red-950/60 text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 font-bold py-2.5 rounded-xl border border-slate-200 dark:border-red-900/40 transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider admin-only">
-          <i class="fa-solid fa-trash-can"></i> Clear All Scan Logs
-        </button>
-
-        <button onclick="logout(); closeModal('modal-settings');" class="w-full bg-pup-maroon hover:bg-red-900 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout from Portal
-        </button>
-      </div>
-
-    </div>
-  </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -783,6 +709,7 @@
     let html5QrcodeScanner = null;
     let qrGenerator = null;
 
+    // Dark Mode Toggle Logic
     function toggleDarkMode() {
       const html = document.documentElement;
       if (html.classList.contains('dark')) {
@@ -798,6 +725,7 @@
       document.documentElement.classList.add('dark');
     }
 
+    // --- LOGIN HANDLERS ---
     function switchLoginMode(role) {
       const adminBtn = document.getElementById('btn-login-admin');
       const partnerBtn = document.getElementById('btn-login-partner');
@@ -891,21 +819,19 @@
       const adminEls = document.querySelectorAll('.admin-only');
       const roleText = document.getElementById('user-role-text');
 
-      const settingsRoleText = document.getElementById('settings-user-role');
-
       if (window.appState.userRole === 'admin') {
         adminEls.forEach(el => el.classList.remove('hidden'));
         roleText.innerText = "Administrator";
-        if (settingsRoleText) settingsRoleText.innerText = "Administrator";
         switchTab('roster');
       } else {
         adminEls.forEach(el => el.classList.add('hidden'));
         roleText.innerText = window.appState.partnerData.name;
-        if (settingsRoleText) settingsRoleText.innerText = window.appState.partnerData.name;
         switchTab('scanner');
       }
     }
 
+
+    // --- TAB SWITCHING ---
     function switchTab(tab) {
       window.activeTab = tab;
 
@@ -931,6 +857,8 @@
       if (tab === 'vouchers') renderVouchers();
     }
 
+
+    // --- STATS OVERVIEW ---
     function updateStats() {
       const students = window.appState.students;
       const stores = window.appState.stores;
@@ -942,6 +870,8 @@
       document.getElementById('stat-total-scans').innerText = logs.length;
     }
 
+
+    // --- RENDER ROSTER ---
     function renderRoster() {
       const container = document.getElementById('roster-grid');
       const query = document.getElementById('search-roster').value.toLowerCase();
@@ -1001,6 +931,8 @@
       }).join('');
     }
 
+
+    // --- VIEW MEMBER PASS ID CARD MATCHING EXACT REPLICA IMAGE 3 ---
     function viewMemberPass(docId) {
       const student = window.appState.students.find(s => s.docId === docId);
       if (!student) return;
@@ -1034,6 +966,8 @@
       openModal('modal-id-card');
     }
 
+
+    // --- CAMERA SCANNER LOGIC ---
     function initScanner() {
       document.getElementById('scan-result').classList.add('hidden');
       document.getElementById('reader').classList.remove('hidden');
@@ -1108,6 +1042,7 @@
           resDiv.className = "mt-6 p-6 rounded-2xl border-4 border-red-500 bg-red-50/50 dark:bg-red-950/40 text-center animate-fade-in";
         }
 
+        // Save scan log to Firestore
         const logId = Date.now().toString();
         await setDoc(doc(window.db, "scan_logs", logId), {
           studentId: rawId,
@@ -1125,6 +1060,8 @@
       }
     }
 
+
+    // --- RENDER LIVE SCAN LOGS ---
     function renderScanLogs() {
       const container = document.getElementById('scan-logs-table');
       const logs = window.appState.scanLogs;
@@ -1155,6 +1092,8 @@
       }).join('');
     }
 
+
+    // --- STORES & VOUCHERS ---
     function renderStores() {
       const container = document.getElementById('stores-grid');
       const stores = window.appState.stores;
@@ -1201,6 +1140,8 @@
       `).join('');
     }
 
+
+    // --- MODAL UTILITIES & CRUD ---
     function openModal(id) {
       document.getElementById(id).classList.remove('hidden');
     }
@@ -1213,8 +1154,8 @@
       document.getElementById('stu-id').value = '';
       document.getElementById('stu-name').value = '';
       document.getElementById('stu-email').value = '';
-      document.getElementById('stu-dept').value = '';
-      document.getElementById('stu-sem').value = '';
+      document.getElementById('stu-dept').value = 'BSBA - Marketing Management';
+      document.getElementById('stu-sem').value = '2026-2027 | 1st Semester';
       document.getElementById('stu-paid').checked = true;
       document.getElementById('student-modal-title').innerText = "Add Student";
       openModal('modal-student');
@@ -1249,8 +1190,8 @@
           studentId: rawId,
           fullName: document.getElementById('stu-name').value,
           email: document.getElementById('stu-email').value,
-          department: document.getElementById('stu-dept').value || "BSBA - Marketing Management",
-          activeSemester: document.getElementById('stu-sem').value || "2026-2027 | 1st Semester",
+          department: document.getElementById('stu-dept').value,
+          activeSemester: document.getElementById('stu-sem').value,
           isMembershipPaid: document.getElementById('stu-paid').checked,
           updatedAt: Date.now()
         }, { merge: true });
@@ -1273,7 +1214,7 @@
     function openStoreModal() {
       document.getElementById('store-doc-id').value = '';
       document.getElementById('store-name').value = '';
-      document.getElementById('store-cat').value = '';
+      document.getElementById('store-cat').value = 'Food & Beverage';
       document.getElementById('store-pin').value = '';
       openModal('modal-store');
     }
@@ -1290,7 +1231,7 @@
         await setDoc(doc(window.db, "businesses", docId), {
           id: docId,
           name: name,
-          category: document.getElementById('store-cat').value || "Partner Store",
+          category: document.getElementById('store-cat').value,
           pin: pin
         });
         closeModal('modal-store');
@@ -1344,6 +1285,7 @@
       } catch(e) { console.error(e); }
     }
 
+    // Attach global window handlers
     window.toggleDarkMode = toggleDarkMode;
     window.switchLoginMode = switchLoginMode;
     window.handleAdminLogin = handleAdminLogin;
@@ -1366,32 +1308,12 @@
     window.openVoucherModal = openVoucherModal;
     window.saveVoucher = saveVoucher;
     window.deleteVoucher = deleteVoucher;
-
-    async function confirmClearScanLogs() {
-      if (!window.appState.scanLogs || window.appState.scanLogs.length === 0) {
-        alert("There are no scan logs to clear.");
-        return;
-      }
-      if (!confirm(`Are you sure you want to clear all ${window.appState.scanLogs.length} scan log records? This action cannot be undone.`)) {
-        return;
-      }
-      try {
-        const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-        const logs = [...window.appState.scanLogs];
-        for (const log of logs) {
-          if (log.docId) {
-            await deleteDoc(doc(window.db, "scan_logs", log.docId));
-          }
-        }
-        alert("All scan logs have been cleared successfully.");
-      } catch (err) {
-        console.error("Error clearing scan logs:", err);
-        alert("Failed to clear scan logs: " + err.message);
-      }
-    }
-
-    window.confirmClearScanLogs = confirmClearScanLogs;
-
   </script>
 </body>
 </html>
+"""
+
+with open('web/index.html', 'w') as f:
+    f.write(html_code)
+
+print("web/index.html successfully updated!")
