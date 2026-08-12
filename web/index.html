@@ -17,9 +17,9 @@
               maroonDeep: '#280202',
               gold: '#FFC107',
               goldDark: '#D39E00',
-              darkBg: '#180303',
-              darkSurface: '#260808',
-              darkCard: '#360D0D'
+              darkBg: '#0B1120',
+              darkSurface: '#151C2C',
+              darkCard: '#1F2937'
             }
           }
         }
@@ -175,7 +175,7 @@
 
   <!-- ==================== LOGIN SCREEN ==================== -->
   <div id="screen-login" class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 bg-slate-100 dark:bg-pup-darkBg">
-    <div class="max-w-md w-full bg-white dark:bg-pup-darkSurface rounded-3xl shadow-xl border border-slate-200 dark:border-red-950/50 p-6 sm:p-8 relative overflow-hidden">
+    <div class="max-w-md w-full bg-white dark:bg-pup-darkSurface rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700/50 p-6 sm:p-8 relative overflow-hidden">
       
       <!-- Top Decorative Accent -->
       <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-pup-maroon via-pup-gold to-pup-maroon"></div>
@@ -209,21 +209,21 @@
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Username</label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-            <input type="text" id="admin-user" required value="" placeholder="Enter username" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
+            <input type="text" id="admin-user" required value="" placeholder="Enter username" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
           </div>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Password</label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400 text-xs"></i>
-            <input type="password" id="admin-pass" required value="" placeholder="Enter password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
+            <input type="password" id="admin-pass" required value="" placeholder="Enter password" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
           </div>
         </div>
         <div class="flex items-center gap-2">
           <input type="checkbox" id="admin-remember" class="w-4 h-4 accent-pup-maroon rounded">
           <label for="admin-remember" class="text-xs font-bold text-slate-600 dark:text-slate-300">Remember me</label>
         </div>
-        <div id="admin-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-red-900"></div>
+        <div id="admin-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-slate-700"></div>
         <button type="submit" class="w-full bg-pup-maroon hover:bg-red-900 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
           <i class="fa-solid fa-right-to-bracket"></i> Login as Administrator
         </button>
@@ -233,19 +233,19 @@
       <form id="form-partner" onsubmit="handlePartnerLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">Select Partner Business</label>
-          <select id="partner-select" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-gold">
+          <select id="partner-select" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-white dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-gold">
             <option value="">Select a Partner Store...</option>
           </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1 uppercase tracking-wider">4-Digit Access PIN</label>
-          <input type="password" id="partner-pin" maxlength="4" value="" placeholder="PIN" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-white dark:bg-pup-darkCard text-lg text-center font-mono tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-pup-gold">
+          <input type="password" id="partner-pin" maxlength="4" value="" placeholder="PIN" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-white dark:bg-pup-darkCard text-lg text-center font-mono tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-pup-gold">
         </div>
         <div class="flex items-center gap-2">
           <input type="checkbox" id="partner-remember" class="w-4 h-4 accent-pup-gold rounded">
           <label for="partner-remember" class="text-xs font-bold text-slate-600 dark:text-slate-300">Remember me</label>
         </div>
-        <div id="partner-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-red-900"></div>
+        <div id="partner-error" class="hidden text-xs text-red-600 dark:text-red-400 font-semibold bg-red-50 dark:bg-red-950/50 p-3 rounded-xl border border-red-200 dark:border-slate-700"></div>
         <button type="submit" class="w-full bg-pup-gold hover:bg-yellow-500 text-pup-maroon font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
           <i class="fa-solid fa-qrcode"></i> Unlock Cashier Scanner
         </button>
@@ -262,7 +262,7 @@
   <div id="screen-main" class="hidden min-h-screen flex flex-col">
     
     <!-- Top Navigation Header -->
-    <header class="bg-pup-maroon dark:bg-pup-maroonDeep text-white border-b border-red-900/50 shadow-md sticky top-0 z-40">
+    <header class="bg-pup-maroon dark:bg-pup-darkSurface text-white border-b border-red-900/50 dark:border-slate-800 shadow-md sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         <!-- Brand / Title -->
@@ -277,23 +277,23 @@
         <!-- Role Badge & Controls -->
         <div class="flex items-center gap-3">
           <!-- Role Badge -->
-          <div id="user-role-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-red-950 text-yellow-200 border border-red-800 flex items-center gap-1.5 shadow-inner">
+          <div id="user-role-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-red-950 dark:bg-pup-darkCard text-yellow-200 border border-red-800 dark:border-slate-700 flex items-center gap-1.5 shadow-inner">
             <i class="fa-solid fa-user-shield"></i> <span id="user-role-text">Administrator</span>
           </div>
 
           <!-- Dark Mode Toggle -->
-          <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-800 text-yellow-300 flex items-center justify-center transition" title="Toggle Theme">
+          <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-red-950/80 dark:bg-pup-darkCard hover:bg-red-900 dark:hover:bg-slate-700 border border-red-800 dark:border-slate-700 text-yellow-300 flex items-center justify-center transition" title="Toggle Theme">
             <i class="fa-solid fa-moon dark:hidden"></i>
             <i class="fa-solid fa-sun hidden dark:block"></i>
           </button>
 
           <!-- Settings Button -->
-          <button onclick="openModal('modal-settings')" class="w-9 h-9 rounded-xl bg-red-950/80 hover:bg-red-900 border border-red-800 text-yellow-300 flex items-center justify-center transition" title="Settings & DB Status">
+          <button onclick="openModal('modal-settings')" class="w-9 h-9 rounded-xl bg-red-950/80 dark:bg-pup-darkCard hover:bg-red-900 dark:hover:bg-slate-700 border border-red-800 dark:border-slate-700 text-yellow-300 flex items-center justify-center transition" title="Settings & DB Status">
             <i class="fa-solid fa-gear"></i>
           </button>
 
           <!-- Logout Button -->
-          <button onclick="logout()" class="px-3 py-1.5 rounded-xl bg-red-900/60 hover:bg-red-800 border border-red-700 text-white text-xs font-bold transition flex items-center gap-1.5" title="Logout">
+          <button onclick="logout()" class="px-3 py-1.5 rounded-xl bg-red-900/60 dark:bg-pup-darkCard hover:bg-red-800 dark:hover:bg-slate-700 border border-red-700 dark:border-slate-700 text-white text-xs font-bold transition flex items-center gap-1.5" title="Logout">
             <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Logout</span>
           </button>
         </div>
@@ -301,7 +301,7 @@
     </header>
 
     <!-- Navigation Tabs Bar -->
-    <nav class="bg-white dark:bg-pup-darkSurface border-b border-slate-200 dark:border-red-950/60 shadow-sm sticky top-16 z-30">
+    <nav class="bg-white dark:bg-pup-darkSurface border-b border-slate-200 dark:border-slate-700/60 shadow-sm sticky top-16 z-30">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex space-x-1 sm:space-x-4 overflow-x-auto py-2 text-xs sm:text-sm font-bold no-scrollbar">
           
@@ -334,7 +334,7 @@
 
       <!-- Stats Metric Cards (Top Overview) -->
       <div id="stats-overview" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-950/80 text-pup-maroon dark:text-pup-gold flex items-center justify-center text-xl font-bold">
             <i class="fa-solid fa-graduation-cap"></i>
           </div>
@@ -344,7 +344,7 @@
           </div>
         </div>
 
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold">
             <i class="fa-solid fa-user-check"></i>
           </div>
@@ -354,7 +354,7 @@
           </div>
         </div>
 
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center gap-4">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl font-bold">
             <i class="fa-solid fa-store"></i>
           </div>
@@ -364,7 +364,7 @@
           </div>
         </div>
 
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex items-center justify-between gap-3">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-12 h-12 shrink-0 rounded-2xl bg-purple-100 dark:bg-purple-950/80 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xl font-bold">
               <i class="fa-solid fa-bolt"></i>
@@ -374,7 +374,7 @@
               <h3 id="stat-total-scans" class="text-xl font-extrabold text-slate-800 dark:text-slate-100">0</h3>
             </div>
           </div>
-          <button onclick="confirmClearScanLogs()" title="Clear All Scan Logs" class="shrink-0 p-2.5 rounded-xl bg-slate-100 dark:bg-pup-darkCard text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/80 dark:hover:text-red-400 border border-slate-200 dark:border-red-900/40 transition admin-only">
+          <button onclick="confirmClearScanLogs()" title="Clear All Scan Logs" class="shrink-0 p-2.5 rounded-xl bg-slate-100 dark:bg-pup-darkCard text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/80 dark:hover:text-red-400 border border-slate-200 dark:border-slate-700/40 transition admin-only">
             <i class="fa-solid fa-trash-can text-sm"></i>
           </button>
         </div>
@@ -385,14 +385,14 @@
       <section id="view-roster" class="tab-view space-y-4">
         
         <!-- Action Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
           <div class="relative flex-1">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
-            <input type="text" id="search-roster" oninput="renderRoster()" placeholder="Search student name, ID, or department..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
+            <input type="text" id="search-roster" oninput="renderRoster()" placeholder="Search student name, ID, or department..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none focus:ring-2 focus:ring-pup-maroon dark:focus:ring-pup-gold">
           </div>
 
           <div class="flex items-center gap-2">
-            <select id="filter-payment" onchange="renderRoster()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-xs font-semibold focus:outline-none">
+            <select id="filter-payment" onchange="renderRoster()" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-xs font-semibold focus:outline-none">
               <option value="ALL">All Statuses</option>
               <option value="PAID">Paid Only</option>
               <option value="PENDING">Pending Only</option>
@@ -413,7 +413,7 @@
 
       <!-- TAB 2: CAMERA SCANNER -->
       <section id="view-scanner" class="tab-view hidden max-w-2xl mx-auto space-y-4">
-        <div class="bg-white dark:bg-pup-darkSurface p-6 rounded-3xl border border-slate-200 dark:border-red-950/60 shadow-md text-center">
+        <div class="bg-white dark:bg-pup-darkSurface p-6 rounded-3xl border border-slate-200 dark:border-slate-700/60 shadow-md text-center">
           
           <div class="flex justify-between items-center mb-4">
             <h2 class="font-extrabold text-lg text-pup-maroon dark:text-pup-gold flex items-center gap-2">
@@ -425,7 +425,7 @@
           </div>
 
           <!-- Camera Stream Container -->
-          <div id="reader" class="w-full bg-black rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-red-900/60 shadow-inner min-h-[300px]"></div>
+          <div id="reader" class="w-full bg-black rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700/60 shadow-inner min-h-[300px]"></div>
 
           <!-- Scan Result Display -->
           <div id="scan-result" class="hidden mt-6 p-6 rounded-2xl border-2 text-center animate-fade-in transition-all">
@@ -440,15 +440,15 @@
 
       <!-- TAB 3: LIVE SCAN LOGS -->
       <section id="view-scans" class="tab-view hidden space-y-4 admin-only">
-        <div class="bg-white dark:bg-pup-darkSurface rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm overflow-hidden">
-          <div class="p-4 bg-slate-50 dark:bg-pup-darkCard border-b border-slate-200 dark:border-red-950/60 font-bold text-sm text-slate-700 dark:text-slate-200 flex justify-between items-center">
+        <div class="bg-white dark:bg-pup-darkSurface rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm overflow-hidden">
+          <div class="p-4 bg-slate-50 dark:bg-pup-darkCard border-b border-slate-200 dark:border-slate-700/60 font-bold text-sm text-slate-700 dark:text-slate-200 flex justify-between items-center">
             <span><i class="fa-solid fa-bolt text-pup-gold mr-2"></i> Real-time Entrance & Store Scan History</span>
             <span class="text-xs font-normal text-slate-400">Auto-updates live</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
               <thead>
-                <tr class="bg-slate-100 dark:bg-pup-darkCard/80 text-slate-500 dark:text-slate-400 uppercase font-bold border-b border-slate-200 dark:border-red-950/60">
+                <tr class="bg-slate-100 dark:bg-pup-darkCard/80 text-slate-500 dark:text-slate-400 uppercase font-bold border-b border-slate-200 dark:border-slate-700/60">
                   <th class="py-3 px-4">Time</th>
                   <th class="py-3 px-4">Student Name</th>
                   <th class="py-3 px-4">Student ID</th>
@@ -456,7 +456,7 @@
                   <th class="py-3 px-4">Notes</th>
                 </tr>
               </thead>
-              <tbody id="scan-logs-table" class="divide-y divide-slate-100 dark:divide-red-950/30 text-slate-700 dark:text-slate-300">
+              <tbody id="scan-logs-table" class="divide-y divide-slate-100 dark:divide-slate-700/30 text-slate-700 dark:text-slate-300">
                 <!-- Dynamic logs -->
               </tbody>
             </table>
@@ -467,7 +467,7 @@
 
       <!-- TAB 4: PARTNER STORES -->
       <section id="view-stores" class="tab-view hidden space-y-4 admin-only">
-        <div class="flex justify-between items-center bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm">
+        <div class="flex justify-between items-center bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
           <h2 class="font-bold text-base text-pup-maroon dark:text-pup-gold flex items-center gap-2">
             <i class="fa-solid fa-store"></i> Participating Partner Stores
           </h2>
@@ -484,7 +484,7 @@
 
       <!-- TAB 5: DISCOUNT VOUCHERS -->
       <section id="view-vouchers" class="tab-view hidden space-y-4 admin-only">
-        <div class="flex justify-between items-center bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm">
+        <div class="flex justify-between items-center bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
           <h2 class="font-bold text-base text-pup-maroon dark:text-pup-gold flex items-center gap-2">
             <i class="fa-solid fa-ticket"></i> Active Discount Vouchers
           </h2>
@@ -504,10 +504,10 @@
 
   <!-- ==================== MEMBER PASS ID CARD VIEW MODAL ==================== -->
   <div id="modal-id-card" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-3xl w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 relative space-y-6 overflow-y-auto max-h-[90vh]">
+    <div class="bg-white dark:bg-pup-darkSurface max-w-3xl w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 relative space-y-6 overflow-y-auto max-h-[90vh]">
       
       <!-- Modal Header -->
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-3">
         <h3 class="font-bold text-lg text-pup-maroon dark:text-pup-gold flex items-center gap-2">
           <i class="fa-solid fa-id-card"></i> Official Member Pass ID
         </h3>
@@ -571,7 +571,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex justify-end gap-3 border-t border-slate-200 dark:border-red-950/60 pt-4">
+      <div class="flex justify-end gap-3 border-t border-slate-200 dark:border-slate-700/60 pt-4">
         <button onclick="closeModal('modal-id-card')" class="px-5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard font-bold text-xs hover:bg-slate-200 transition">
           Close
         </button>
@@ -585,8 +585,8 @@
 
   <!-- ==================== ADD / EDIT STUDENT MODAL ==================== -->
   <div id="modal-student" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
+    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-3">
         <h3 id="student-modal-title" class="font-bold text-lg text-pup-maroon dark:text-pup-gold">Add Student</h3>
         <button onclick="closeModal('modal-student')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-pup-darkCard text-slate-500 dark:text-slate-300 flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -597,30 +597,30 @@
         <input type="hidden" id="stu-doc-id">
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Student ID (PUP Format)</label>
-          <input type="text" id="stu-id" required value="" placeholder="e.g. 2026-00101-SR-0" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-id" required value="" placeholder="e.g. 2026-00101-SR-0" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Full Name</label>
-          <input type="text" id="stu-name" required value="" placeholder="Full Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-name" required value="" placeholder="Full Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">PUP Webmail</label>
-          <input type="email" id="stu-email" value="" placeholder="student@iskolarngbayan.pup.edu.ph" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="email" id="stu-email" value="" placeholder="student@iskolarngbayan.pup.edu.ph" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Department / Program</label>
-          <input type="text" id="stu-dept" value="" placeholder="BSBA - Marketing Management" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-dept" value="" placeholder="BSBA - Marketing Management" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Active Semester</label>
-          <input type="text" id="stu-sem" value="" placeholder="2026-2027 | 1st Semester" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="stu-sem" value="" placeholder="2026-2027 | 1st Semester" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div class="flex items-center gap-2 pt-2">
           <input type="checkbox" id="stu-paid" class="w-4 h-4 accent-pup-maroon rounded" checked>
           <label for="stu-paid" class="text-sm font-bold text-slate-700 dark:text-slate-200">Membership Dues Paid</label>
         </div>
 
-        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-red-950/60 pt-4 mt-4">
+        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
           <button type="button" onclick="closeModal('modal-student')" class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard">Cancel</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-pup-maroon text-white font-bold shadow">Save Student</button>
         </div>
@@ -631,8 +631,8 @@
 
   <!-- ==================== ADD STORE MODAL ==================== -->
   <div id="modal-store" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
+    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-3">
         <h3 id="store-modal-title" class="font-bold text-lg text-pup-maroon dark:text-pup-gold">Add Partner Store</h3>
         <button onclick="closeModal('modal-store')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-pup-darkCard text-slate-500 dark:text-slate-300 flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -643,18 +643,18 @@
         <input type="hidden" id="store-doc-id">
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Store Name</label>
-          <input type="text" id="store-name" required value="" placeholder="Store Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="store-name" required value="" placeholder="Store Name" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Category</label>
-          <input type="text" id="store-cat" value="" placeholder="Food & Beverage" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="store-cat" value="" placeholder="Food & Beverage" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">4-Digit Access PIN</label>
-          <input type="text" id="store-pin" maxlength="4" required value="" placeholder="1234" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-lg text-center font-mono tracking-widest focus:outline-none">
+          <input type="text" id="store-pin" maxlength="4" required value="" placeholder="1234" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-lg text-center font-mono tracking-widest focus:outline-none">
         </div>
 
-        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-red-950/60 pt-4 mt-4">
+        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
           <button type="button" onclick="closeModal('modal-store')" class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard">Cancel</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-pup-maroon text-white font-bold shadow">Save Store</button>
         </div>
@@ -665,8 +665,8 @@
 
   <!-- ==================== ADD VOUCHER MODAL ==================== -->
   <div id="modal-voucher" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
+    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-3">
         <h3 class="font-bold text-lg text-pup-maroon dark:text-pup-gold">Distribute Discount Voucher</h3>
         <button onclick="closeModal('modal-voucher')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-pup-darkCard text-slate-500 dark:text-slate-300 flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -676,20 +676,20 @@
       <form id="form-voucher" onsubmit="saveVoucher(event)" class="space-y-3 text-xs font-semibold">
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Partner Store</label>
-          <select id="vouch-store-select" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <select id="vouch-store-select" required class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
             <!-- Dynamic stores -->
           </select>
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Discount Title</label>
-          <input type="text" id="vouch-title" required value="" placeholder="e.g. 10% Off All Orders" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
+          <input type="text" id="vouch-title" required value="" placeholder="e.g. 10% Off All Orders" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none">
         </div>
         <div>
           <label class="block mb-1 text-slate-600 dark:text-slate-300">Description</label>
-          <textarea id="vouch-desc" rows="2" placeholder="Description of voucher terms" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-red-900/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none"></textarea>
+          <textarea id="vouch-desc" rows="2" placeholder="Description of voucher terms" class="w-full p-2.5 rounded-xl border border-slate-300 dark:border-slate-700/40 bg-slate-50 dark:bg-pup-darkCard text-sm focus:outline-none"></textarea>
         </div>
 
-        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-red-950/60 pt-4 mt-4">
+        <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700/60 pt-4 mt-4">
           <button type="button" onclick="closeModal('modal-voucher')" class="px-4 py-2 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard">Cancel</button>
           <button type="submit" class="px-5 py-2 rounded-xl bg-pup-gold text-pup-maroon font-bold shadow">Distribute Voucher</button>
         </div>
@@ -702,9 +702,9 @@
   
   <!-- ==================== SETTINGS & DB STATUS MODAL ==================== -->
   <div id="modal-settings" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-red-900 space-y-5">
+    <div class="bg-white dark:bg-pup-darkSurface max-w-md w-full rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700 space-y-5">
       
-      <div class="flex justify-between items-center border-b border-slate-200 dark:border-red-950/60 pb-3">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700/60 pb-3">
         <h3 class="font-bold text-lg text-pup-maroon dark:text-pup-gold flex items-center gap-2">
           <i class="fa-solid fa-gear"></i> Settings & Database Status
         </h3>
@@ -714,7 +714,7 @@
       </div>
 
       <!-- Firebase DB Status Card -->
-      <div class="bg-slate-50 dark:bg-pup-darkCard p-4 rounded-2xl border border-slate-200 dark:border-red-900/40 space-y-3">
+      <div class="bg-slate-50 dark:bg-pup-darkCard p-4 rounded-2xl border border-slate-200 dark:border-slate-700/40 space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">Firebase Firestore</span>
           <div id="db-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
@@ -740,8 +740,8 @@
       </div>
 
       <!-- Quick Actions -->
-      <div class="pt-2 border-t border-slate-200 dark:border-red-950/60 space-y-2">
-        <button onclick="confirmClearScanLogs(); closeModal('modal-settings');" class="w-full bg-slate-100 dark:bg-pup-darkCard hover:bg-red-50 dark:hover:bg-red-950/60 text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 font-bold py-2.5 rounded-xl border border-slate-200 dark:border-red-900/40 transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider admin-only">
+      <div class="pt-2 border-t border-slate-200 dark:border-slate-700/60 space-y-2">
+        <button onclick="confirmClearScanLogs(); closeModal('modal-settings');" class="w-full bg-slate-100 dark:bg-pup-darkCard hover:bg-red-50 dark:hover:bg-red-950/60 text-slate-700 dark:text-slate-200 hover:text-red-600 dark:hover:text-red-400 font-bold py-2.5 rounded-xl border border-slate-200 dark:border-slate-700/40 transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider admin-only">
           <i class="fa-solid fa-trash-can"></i> Clear All Scan Logs
         </button>
 
@@ -1033,7 +1033,7 @@
           : `<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-400"><i class="fa-solid fa-clock mr-1"></i> PENDING</span>`;
 
         return `
-          <div class="bg-white dark:bg-pup-darkSurface p-5 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm hover:shadow-md transition flex flex-col justify-between gap-4">
+          <div class="bg-white dark:bg-pup-darkSurface p-5 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition flex flex-col justify-between gap-4">
             <div>
               <div class="flex justify-between items-start gap-2 mb-2">
                 <div>
@@ -1046,7 +1046,7 @@
               <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">${s.activeSemester || '2026-2027 | 1st Semester'}</p>
             </div>
 
-            <div class="flex gap-2 border-t border-slate-100 dark:border-red-950/40 pt-3">
+            <div class="flex gap-2 border-t border-slate-100 dark:border-slate-700/40 pt-3">
               <button onclick="viewMemberPass('${s.docId}')" class="flex-1 py-2 bg-pup-gold hover:bg-yellow-500 text-pup-maroon font-extrabold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-id-card"></i> Member Pass
               </button>
@@ -1226,7 +1226,7 @@
       }
 
       container.innerHTML = stores.map(s => `
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm flex justify-between items-center">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex justify-between items-center">
           <div>
             <h4 class="font-extrabold text-sm text-pup-maroon dark:text-pup-gold">${s.name || 'Store'}</h4>
             <p class="text-xs text-slate-500 dark:text-slate-400">${s.category || 'Partner Store'} • <span class="font-mono font-bold text-slate-700 dark:text-slate-300">PIN: ${s.pin}</span></p>
@@ -1248,7 +1248,7 @@
       }
 
       container.innerHTML = vouchers.map(v => `
-        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-red-950/60 shadow-sm relative overflow-hidden flex justify-between items-start">
+        <div class="bg-white dark:bg-pup-darkSurface p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 shadow-sm relative overflow-hidden flex justify-between items-start">
           <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-pup-gold"></div>
           <div class="pl-3">
             <h4 class="font-black text-sm text-slate-800 dark:text-slate-100">${v.title || 'Voucher'}</h4>
