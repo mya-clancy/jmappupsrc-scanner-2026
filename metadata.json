@@ -1,0 +1,6 @@
+{
+  "name": "JMAP QR Scanner",
+  "description": "Official JMAP - PUP Santa Rosa QR-based student membership scanner, status validator, student directory, CSV export, and membership card JPG generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

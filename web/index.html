@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JMAP PUP Santa Rosa - Firebase Web Admin Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    .maroon-bg { background-color: #800000; }
+    .maroon-text { color: #800000; }
+    .gold-bg { background-color: #FFC107; }
+    .gold-text { color: #856404; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+  <!-- Header Banner -->
+  <header class="maroon-bg text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center font-bold text-red-900 text-xl border-2 border-white shadow">
+          PUP
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-wide text-white">JMAP PUP Santa Rosa — Cloud Web Portal</h1>
+          <p class="text-xs text-yellow-200">Connected live to Firebase Firestore <span id="sync-status" class="inline-block w-2 h-2 rounded-full bg-emerald-400 ml-1"></span></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs bg-red-950 px-3 py-1.5 rounded-lg border border-red-800">
+        <i class="fa-solid fa-cloud text-amber-400"></i>
+        <span>Project: <strong>pupsrc-jmap-qrcodescanner</strong></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 flex space-x-8 text-sm font-semibold">
+      <button onclick="switchTab('students')" id="tab-students" class="py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2">
+        <i class="fa-solid fa-users"></i> Student Roster (<span id="student-count">0</span>)
+      </button>
+      <button onclick="switchTab('scans')" id="tab-scans" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-qrcode"></i> Live Scan Logs (<span id="scan-count">0</span>)
+      </button>
+      <button onclick="switchTab('businesses')" id="tab-businesses" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-store"></i> Partner Stores (<span id="business-count">0</span>)
+      </button>
+      <button onclick="switchTab('redemptions')" id="tab-redemptions" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-ticket"></i> Voucher Redemptions (<span id="redemption-count">0</span>)
+      </button>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- TAB 1: Students Roster -->
+    <section id="view-students">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <div class="relative w-full sm:w-96">
+          <input type="text" id="search-student" onkeyup="filterStudents()" placeholder="Search student name or ID..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-red-800 bg-white shadow-sm">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+        </div>
+        <button onclick="openAddStudentModal()" class="w-full sm:w-auto maroon-bg text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-900 transition flex items-center justify-center gap-2 shadow">
+          <i class="fa-solid fa-plus"></i> Add New Student
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
+              <th class="py-3.5 px-4">Student ID</th>
+              <th class="py-3.5 px-4">Full Name</th>
+              <th class="py-3.5 px-4">Department</th>
+              <th class="py-3.5 px-4">Active Semester</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="student-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <tr>
+              <td colspan="6" class="py-12 text-center text-slate-400">Loading student directory from Firebase Firestore...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: Scan Logs -->
+    <section id="view-scans" class="hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700 flex justify-between items-center">
+          <span><i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Realtime Entrance Scan History</span>
+          <span class="text-xs font-normal text-slate-500">Auto-updates live from mobile app scans</span>
+        </div>
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
+              <th class="py-3.5 px-4">Timestamp</th>
+              <th class="py-3.5 px-4">Student Name</th>
+              <th class="py-3.5 px-4">Student ID</th>
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4">Semester</th>
+              <th class="py-3.5 px-4">Notes</th>
+            </tr>
+          </thead>
+          <tbody id="scan-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <tr><td colspan="6" class="py-12 text-center text-slate-400">No scan logs recorded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: Partner Stores -->
+    <section id="view-businesses" class="hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-store text-red-800"></i> Registered Partner Stores
+        </h3>
+        <div id="business-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated live -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Redemptions -->
+    <section id="view-redemptions" class="hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
+          <i class="fa-solid fa-gift text-emerald-600 mr-2"></i> Monthly Discount Voucher Usage Logs
+        </div>
+        <table class="w-full text-left text-sm border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
+              <th class="py-3.5 px-4">Time</th>
+              <th class="py-3.5 px-4">Student</th>
+              <th class="py-3.5 px-4">Partner Store</th>
+              <th class="py-3.5 px-4">Voucher Title</th>
+              <th class="py-3.5 px-4">Month/Year</th>
+            </tr>
+          </thead>
+          <tbody id="redemption-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <tr><td colspan="5" class="py-12 text-center text-slate-400">No voucher redemptions logged yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Add Student Modal -->
+  <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+      <h2 class="text-xl font-bold maroon-text mb-4">Register New Student</h2>
+      <form id="add-student-form" onsubmit="saveStudent(event)">
+        <div class="space-y-3 text-sm">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Student ID (PUP Format)</label>
+            <input type="text" id="m-id" required placeholder="2026-00107-SR-0" class="w-full px-3 py-2 border rounded-xl">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
+            <input type="text" id="m-name" required placeholder="Juan Dela Cruz" class="w-full px-3 py-2 border rounded-xl">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">PUP Webmail</label>
+            <input type="email" id="m-email" placeholder="juan.delacruz@iskolarngbayan.pup.edu.ph" class="w-full px-3 py-2 border rounded-xl">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Department</label>
+            <input type="text" id="m-dept" value="BSBA - Marketing Management" class="w-full px-3 py-2 border rounded-xl">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Active Semester</label>
+            <input type="text" id="m-sem" value="2026-2027 | 1st Semester" class="w-full px-3 py-2 border rounded-xl">
+          </div>
+          <div class="flex items-center gap-2 pt-2">
+            <input type="checkbox" id="m-paid" class="w-4 h-4 text-red-800 rounded" checked>
+            <label for="m-paid" class="font-semibold text-slate-700">Membership Dues Paid</label>
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" onclick="closeAddStudentModal()" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl maroon-bg text-white font-semibold shadow hover:bg-red-900">Save to Cloud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase v10 Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // Firebase Config using your google-services.json details
+    const firebaseConfig = {
+      apiKey: "AIzaSyDPdFPZIfPGIJXdgDdSyxpUW1SJtwFjqWQ",
+      authDomain: "pupsrc-jmap-qrcodescanner.firebaseapp.com",
+      projectId: "pupsrc-jmap-qrcodescanner",
+      storageBucket: "pupsrc-jmap-qrcodescanner.firebasestorage.app",
+      messagingSenderId: "574456278067",
+      appId: "1:574456278067:android:d24601aada2da8b5e24746"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.allStudentsCache = [];
+
+    // 1. Listen for Realtime Students
+    onSnapshot(collection(db, "students"), (snapshot) => {
+      const students = [];
+      snapshot.forEach((doc) => students.push({ id: doc.id, ...doc.data() }));
+      window.allStudentsCache = students;
+      document.getElementById('student-count').innerText = students.length;
+      renderStudents(students);
+    });
+
+    // 2. Listen for Scan Logs
+    onSnapshot(collection(db, "scan_logs"), (snapshot) => {
+      const logs = [];
+      snapshot.forEach((doc) => logs.push({ id: doc.id, ...doc.data() }));
+      logs.sort((a,b) => (b.scannedAt || 0) - (a.scannedAt || 0));
+      document.getElementById('scan-count').innerText = logs.length;
+      renderScans(logs);
+    });
+
+    // 3. Listen for Businesses
+    onSnapshot(collection(db, "businesses"), (snapshot) => {
+      const list = [];
+      snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
+      document.getElementById('business-count').innerText = list.length;
+      renderBusinesses(list);
+    });
+
+    // 4. Listen for Voucher Redemptions
+    onSnapshot(collection(db, "voucher_redemptions"), (snapshot) => {
+      const list = [];
+      snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
+      list.sort((a,b) => (b.redeemedAt || 0) - (a.redeemedAt || 0));
+      document.getElementById('redemption-count').innerText = list.length;
+      renderRedemptions(list);
+    });
+
+    // Render Functions
+    function renderStudents(students) {
+      const tbody = document.getElementById('student-table-body');
+      if (students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No students registered in Firestore.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = students.map(s => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-3 px-4 font-mono text-xs font-bold text-red-900">${s.studentId || s.id}</td>
+          <td class="py-3 px-4 font-semibold text-slate-900">${s.fullName || 'N/A'}</td>
+          <td class="py-3 px-4 text-xs text-slate-500">${s.department || ''}</td>
+          <td class="py-3 px-4 text-xs text-slate-600">${s.activeSemester || ''}</td>
+          <td class="py-3 px-4">
+            ${s.isMembershipPaid 
+              ? `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1"></i> Paid</span>`
+              : `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1"></i> Pending</span>`}
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="togglePayment('${s.studentId || s.id}', ${!s.isMembershipPaid})" class="text-xs text-blue-600 hover:underline mr-3">
+              ${s.isMembershipPaid ? 'Mark Pending' : 'Mark Paid'}
+            </button>
+            <button onclick="deleteStudentCloud('${s.studentId || s.id}')" class="text-xs text-red-600 hover:underline">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderScans(logs) {
+      const tbody = document.getElementById('scan-table-body');
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No scan history in cloud.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = logs.map(l => {
+        const time = l.scannedAt ? new Date(l.scannedAt).toLocaleString() : 'N/A';
+        let badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800">VALID</span>`;
+        if (l.status === 'EXPIRED_SEMESTER') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">EXPIRED</span>`;
+        if (l.status === 'NOT_FOUND') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800">NOT FOUND</span>`;
+        if (l.status === 'PAYMENT_PENDING') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">PENDING DUES</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 text-xs font-mono text-slate-500">${time}</td>
+            <td class="py-3 px-4 font-semibold text-slate-800">${l.studentName || 'Unknown'}</td>
+            <td class="py-3 px-4 font-mono text-xs text-slate-600">${l.studentId || ''}</td>
+            <td class="py-3 px-4">${badge}</td>
+            <td class="py-3 px-4 text-xs text-slate-500">${l.scannedSemester || ''}</td>
+            <td class="py-3 px-4 text-xs text-slate-500">${l.notes || ''}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderBusinesses(list) {
+      const container = document.getElementById('business-grid');
+      if (list.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-sm">No partner stores synced.</p>`;
+        return;
+      }
+      container.innerHTML = list.map(b => `
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex justify-between items-center">
+          <div>
+            <h4 class="font-bold text-red-950">${b.name}</h4>
+            <p class="text-xs text-slate-500">${b.category}</p>
+          </div>
+          <span class="text-xs font-mono bg-white px-2.5 py-1 rounded border font-semibold text-slate-700">PIN: ${b.pin}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderRedemptions(list) {
+      const tbody = document.getElementById('redemption-table-body');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No voucher redemptions logged.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="py-3 px-4 text-xs font-mono text-slate-500">${r.redeemedAt ? new Date(r.redeemedAt).toLocaleString() : ''}</td>
+          <td class="py-3 px-4 font-semibold">${r.studentName}</td>
+          <td class="py-3 px-4 text-slate-700 font-medium">${r.businessName}</td>
+          <td class="py-3 px-4 text-xs font-bold text-emerald-700">${r.discountTitle}</td>
+          <td class="py-3 px-4 text-xs text-slate-500">${r.monthYear}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Window global action bindings for HTML buttons
+    window.togglePayment = async (id, newPaidState) => {
+      await setDoc(doc(db, "students", id), { isMembershipPaid: newPaidState, updatedAt: Date.now() }, { merge: true });
+    };
+
+    window.deleteStudentCloud = async (id) => {
+      if (confirm(`Delete student ${id} from Cloud Firestore?`)) {
+        await deleteDoc(doc(db, "students", id));
+      }
+    };
+
+    window.saveStudent = async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('m-id').value.trim();
+      const name = document.getElementById('m-name').value.trim();
+      const email = document.getElementById('m-email').value.trim();
+      const dept = document.getElementById('m-dept').value.trim();
+      const sem = document.getElementById('m-sem').value.trim();
+      const paid = document.getElementById('m-paid').checked;
+
+      await setDoc(doc(db, "students", id), {
+        studentId: id,
+        fullName: name,
+        email: email,
+        department: dept,
+        activeSemester: sem,
+        isMembershipPaid: paid,
+        joinYear: "2026",
+        notes: "Added via Web Portal",
+        updatedAt: Date.now()
+      });
+
+      closeAddStudentModal();
+    };
+
+    window.filterStudents = () => {
+      const query = document.getElementById('search-student').value.toLowerCase();
+      const filtered = window.allStudentsCache.filter(s => 
+        (s.fullName && s.fullName.toLowerCase().includes(query)) ||
+        (s.studentId && s.studentId.toLowerCase().includes(query))
+      );
+      renderStudents(filtered);
+    };
+  </script>
+
+  <script>
+    function switchTab(tab) {
+      ['students', 'scans', 'businesses', 'redemptions'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).className = 'py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2';
+      });
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).className = 'py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2 font-bold';
+    }
+
+    function openAddStudentModal() {
+      document.getElementById('add-modal').classList.remove('hidden');
+      document.getElementById('add-modal').classList.add('flex');
+    }
+
+    function closeAddStudentModal() {
+      document.getElementById('add-modal').classList.add('hidden');
+      document.getElementById('add-modal').classList.remove('flex');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- QR / Membership Card Icon vector centered inside 66dp zone -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,28 C26.7,28 24,30.7 24,34 L24,74 C24,77.3 26.7,80 30,80 L78,80 C81.3,80 84,77.3 84,74 L84,34 C84,30.7 81.3,28 78,28 L30,28 Z M30,32 L78,32 C79.1,32 80,32.9 80,34 L80,74 C80,75.1 79.1,76 78,76 L30,76 C28.9,76 28,75.1 28,74 L28,34 C28,32.9 28.9,32 30,32 Z" />
+    <!-- QR Code Mini Grid -->
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M34,38 H48 V52 H34 Z M37,41 V49 H45 V41 Z M39,43 H43 V47 H39 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M60,38 H74 V52 H60 Z M63,41 V49 H71 V41 Z M65,43 H69 V47 H65 Z" />
+    <path
+        android:fillColor="#38BDF8"
+        android:pathData="M34,60 H48 V72 H34 Z M37,63 V69 H45 V63 Z M39,65 H43 V67 H39 Z" />
+    <!-- Verified Badge Check -->
+    <path
+        android:fillColor="#4ADE80"
+        android:pathData="M60,60 L65,65 L73,57 L76,60 L65,71 L57,63 Z" />
+</vector>
