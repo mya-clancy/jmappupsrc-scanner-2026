@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import os
+
+html_code = """<!DOCTYPE html>
 <html lang="en" class="light">
 <head>
   <meta charset="UTF-8">
@@ -1307,3 +1309,9 @@
   </script>
 </body>
 </html>
+"""
+
+with open("web/index.html", "w") as f:
+    f.write(html_code)
+
+print("web/index.html updated successfully!")
