@@ -324,7 +324,7 @@ fun LoginScreen(
                                 onClick = {
                                     val success = viewModel.loginAdmin(adminUsername, adminPassword)
                                     if (!success) {
-                                        adminErrorMessage = "Invalid admin credentials! Required: User 'admin', Password 'jmapup'"
+                                        adminErrorMessage = "Invalid admin credentials!"
                                     } else {
                                         Toast.makeText(context, "Logged in as Admin", Toast.LENGTH_SHORT).show()
                                     }
@@ -347,17 +347,6 @@ fun LoginScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Login to Admin Portal", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                             }
-
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            Text(
-                                text = "Default Admin Login: admin / jmapup",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = PupMaroon,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium
-                            )
-
                         } else {
                             // --- SELECT PARTNERS / STORE CASHIER LOGIN FORM ---
                             Text(
@@ -436,7 +425,7 @@ fun LoginScreen(
                                 ) {
                                     if (businesses.isEmpty()) {
                                         DropdownMenuItem(
-                                            text = { Text("No stores added yet", color = PupMaroon) },
+                                            text = { Text("No stores added yet", color = MaterialTheme.colorScheme.onSurface) },
                                             onClick = { partnerDropdownExpanded = false }
                                         )
                                     } else {
@@ -444,8 +433,8 @@ fun LoginScreen(
                                             DropdownMenuItem(
                                                 text = {
                                                     Column {
-                                                        Text(business.name, fontWeight = FontWeight.Bold, color = PupMaroon)
-                                                        Text(business.category, style = MaterialTheme.typography.labelSmall, color = PupMaroonDark)
+                                                        Text(business.name, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                                                        Text(business.category, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                     }
                                                 },
                                                 onClick = {
@@ -508,7 +497,7 @@ fun LoginScreen(
                                     }
                                     val success = viewModel.loginPartner(partner, partnerPin)
                                     if (!success) {
-                                        partnerErrorMessage = "Incorrect PIN for ${partner.name}! (Default PIN is 1234)"
+                                        partnerErrorMessage = "Incorrect PIN for ${partner.name}!"
                                     } else {
                                         Toast.makeText(context, "Scanner Unlocked for ${partner.name}", Toast.LENGTH_SHORT).show()
                                     }
@@ -532,15 +521,6 @@ fun LoginScreen(
                                 Text("Unlock Camera Scanner", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            Text(
-                                text = "Default Store PIN for testing: 1234",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = PupMaroonDark,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium
-                            )
                         }
                     }
                 }

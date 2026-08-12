@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -167,7 +168,7 @@ class MainActivity : ComponentActivity() {
                                         label = { Text("Businesses") }
                                     )
 
-                                    // 5. Cloud Database
+                                    // 5. Settings
                                     val isCloudSelected = currentRoute == "firebase"
                                     NavigationBarItem(
                                         selected = isCloudSelected,
@@ -180,8 +181,8 @@ class MainActivity : ComponentActivity() {
                                                 restoreState = true
                                             }
                                         },
-                                        icon = { Icon(Icons.Default.Cloud, contentDescription = "Cloud DB") },
-                                        label = { Text("Cloud DB") }
+                                        icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                                        label = { Text("Settings") }
                                     )
                                 }
                             }
