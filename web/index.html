@@ -46,6 +46,7 @@
       aspect-ratio: 1.586 / 1;
       background: #FFFFFF;
       border-radius: 4cqw;
+      border: 0.2cqw solid #000000;
       box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.7);
       color: #0F172A;
       position: relative;
@@ -59,24 +60,24 @@
     }
 
     .id-pass-header-banner {
-      background-color: #FFFFFF;
-      border-bottom: 0.8cqw solid #FFC107;
+      background-color: #FFC107;
+      border-bottom: 0.6cqw solid #000000;
       padding: 2.5cqw 4cqw;
     }
 
     .id-pass-header-banner .title {
       font-size: 2.2cqw;
-      font-weight: 500;
+      font-weight: 800;
       letter-spacing: 0.02em;
-      color: #FFC107;
+      color: #0F172A;
       text-transform: uppercase;
     }
     
     .id-pass-header-banner .subtitle {
-      font-size: 1.6cqw;
-      font-weight: 400;
+      font-size: 1.4cqw;
+      font-weight: 600;
       letter-spacing: 0.05em;
-      color: #64748B;
+      color: #0F172A;
       text-transform: uppercase;
       margin-top: 0.4cqw;
     }
@@ -103,18 +104,19 @@
     }
 
     .id-pass-label {
-      font-size: 1.4cqw;
-      letter-spacing: 0.05em;
+      font-size: 1.3cqw;
+      letter-spacing: 0.08em;
       color: #0F172A;
-      font-weight: 500;
+      font-weight: 800;
       text-transform: uppercase;
       margin-bottom: 0.4cqw;
+      opacity: 0.7;
     }
 
     .id-pass-val {
-      font-size: 2.4cqw;
-      font-weight: 500;
-      color: #334155;
+      font-size: 2.6cqw;
+      font-weight: 800;
+      color: #0F172A;
       line-height: 1.2;
     }
 
@@ -150,10 +152,9 @@
 
     .id-pass-qr-box {
       background: #FFFFFF;
-      border: 0.4cqw solid #FFC107;
+      border: 0.5cqw solid #000000;
       border-radius: 1.5cqw;
       padding: 0.8cqw;
-      box-shadow: 0 1cqw 3cqw rgba(0,0,0,0.5);
     }
 
     .id-pass-qr-box canvas {
@@ -164,20 +165,22 @@
 
     .id-pass-qr-label {
       font-size: 1.4cqw;
-      font-weight: 600;
-      color: #FFC107;
+      font-weight: 800;
+      color: #0F172A;
       letter-spacing: 0.05em;
       text-transform: uppercase;
     }
 
     .id-pass-footer {
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 1.2cqw 4cqw;
+      border-top: 0.6cqw solid #000000;
+      padding: 1.5cqw 4cqw;
       font-size: 1.3cqw;
-      color: #64748B;
-      text-align: left;
-      letter-spacing: 0.02em;
-      margin-bottom: 0.5cqw;
+      color: #0F172A;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.05em;
+      margin-bottom: 0;
+      background-color: #FFFFFF;
     }
 
     @media print {
@@ -594,9 +597,6 @@
         <button onclick="savePassLocal()" class="px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 text-white font-black text-xs shadow-md hover:bg-slate-900 transition flex items-center gap-2">
           <i class="fa-solid fa-download"></i> Save (JPG)
         </button>
-        <button id="btn-save-drive" onclick="savePassToDrive()" class="px-5 py-2.5 rounded-xl bg-pup-gold text-pup-maroon font-black text-xs shadow-md hover:bg-yellow-500 transition flex items-center gap-2">
-          <i class="fa-brands fa-google-drive"></i> Save to Drive
-        </button>
       </div>
     </div>
   </div>
@@ -827,24 +827,6 @@
 
   <script>
     window.activeTab = 'roster';
-
-    async function savePassToDrive() {
-        const card = document.getElementById('printable-id-card');
-        const name = document.getElementById('pass-card-name').innerText;
-        const id = document.getElementById('pass-card-id').innerText;
-        const sem = document.getElementById('pass-card-sem').innerText;
-        
-        const filename = formatFilename(name, id, sem);
-
-        try {
-            const dataUrl = await htmlToImage.toJpeg(card, { quality: 0.95, pixelRatio: 2 });
-            // For now, prompt the user that OAuth is required
-            alert("Saving " + filename + " to Google Drive via OAuth is being configured...");
-        } catch (error) {
-            console.error('Oops, something went wrong!', error);
-            alert("Failed to process image for Drive.");
-        }
-    }
 
 
     function formatFilename(name, id, semester) {
@@ -1151,7 +1133,7 @@
         qrGenerator = new QRious({
           element: canvas,
           size: 200,
-          foreground: '#8C0000',
+          foreground: '#000000',
           background: '#FFFFFF',
           level: 'H'
         });
