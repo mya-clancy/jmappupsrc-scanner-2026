@@ -28,6 +28,7 @@
   </script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -808,6 +809,40 @@
 
   <script>
     window.activeTab = 'roster';
+
+    function formatFilename(name, id, semester) {
+        const cleanName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const cleanId = id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const cleanSem = semester.split('|')[0].trim().replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        return `${cleanName}_${cleanId}_${cleanSem}.jpg`;
+    }
+
+    async function savePassLocal() {
+        const card = document.getElementById('printable-id-card');
+        const name = document.getElementById('pass-card-name').innerText;
+        const id = document.getElementById('pass-card-id').innerText;
+        const sem = document.getElementById('pass-card-sem').innerText;
+        
+        const filename = formatFilename(name, id, sem);
+
+        try {
+            const dataUrl = await htmlToImage.toJpeg(card, { quality: 0.95, pixelRatio: 2 });
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.click();
+        } catch (error) {
+            console.error('Oops, something went wrong!', error);
+            alert("Failed to save image. Please try again.");
+        }
+    }
+
+    async function savePassToDrive() {
+        // Placeholder for Google Drive integration
+        // This will be implemented after OAuth is configured
+        alert("Google Drive Integration is being configured...");
+    }
+
 
     function checkSession() {
       const savedRole = localStorage.getItem('jmap_session_role');
