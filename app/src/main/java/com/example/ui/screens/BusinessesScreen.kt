@@ -1,6 +1,8 @@
 package com.example.ui.screens
 
 import android.widget.Toast
+import com.example.ui.theme.PupGold
+import com.example.ui.theme.PupMaroonDark
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -265,7 +267,10 @@ fun BusinessesScreen(
                                 }
                             },
                             shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = EmeraldActive)
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PupGold,
+                                contentColor = PupMaroonDark
+                            )
                         ) {
                             Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))

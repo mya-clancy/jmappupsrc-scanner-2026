@@ -2,535 +2,791 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JMAP PUP Santa Rosa - Firebase Web Admin Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>JMAP QR Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-    .maroon-bg { background-color: #800000; }
-    .maroon-text { color: #800000; }
-    .gold-bg { background-color: #FFC107; }
-    .gold-text { color: #856404; }
+    body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+    .bg-pup-maroon { background-color: #800000; }
+    .text-pup-maroon { color: #800000; }
+    .bg-pup-gold { background-color: #FFC107; }
+    .text-pup-gold { color: #FFC107; }
+    .border-pup-maroon { border-color: #800000; }
+    
+    /* Mobile app styling constraints */
+    #app { max-width: 600px; margin: 0 auto; background: #fff; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+    .content-area { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 600px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-around; z-index: 50; }
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #64748b; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+    .nav-item.active { color: #800000; font-weight: bold; }
+    .nav-item i { font-size: 20px; }
+    .nav-fab-container { position: relative; top: -15px; }
+    .nav-fab { background: #800000; color: white; border-radius: 50%; width: 56px; height: 56px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(128,0,0,0.3); border: 4px solid #fff; font-size: 24px; }
+    
+    .hidden { display: none !important; }
+    
+    /* Scanner tweaks */
+    #reader { width: 100%; border: none !important; border-radius: 12px; overflow: hidden; }
+    #reader__scan_region { background: #000; }
+    #reader__dashboard_section_csr span { color: #800000 !important; }
+    #reader button { background: #800000 !important; color: white !important; border-radius: 8px !important; padding: 8px 16px !important; border: none !important; margin-top: 10px !important; font-weight: bold !important; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body>
 
-  <!-- Header Banner -->
-  <header class="maroon-bg text-white shadow-md">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-full gold-bg flex items-center justify-center font-bold text-red-900 text-xl border-2 border-white shadow">
-          PUP
-        </div>
-        <div>
-          <h1 class="text-xl font-bold tracking-wide text-white">JMAP PUP Santa Rosa — Cloud Web Portal</h1>
-          <p class="text-xs text-yellow-200">Connected live to Firebase Firestore <span id="sync-status" class="inline-block w-2 h-2 rounded-full bg-emerald-400 ml-1"></span></p>
-        </div>
+<div id="app">
+  
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <div id="screen-login" class="flex-1 flex flex-col items-center p-6 bg-slate-50">
+    <div class="mt-10 mb-8 flex flex-col items-center">
+      <div class="w-24 h-24 rounded-full bg-pup-gold flex items-center justify-center font-bold text-pup-maroon text-4xl border-4 border-white shadow-lg mb-4">
+        PUP
       </div>
-      <div class="flex items-center gap-2 text-xs bg-red-950 px-3 py-1.5 rounded-lg border border-red-800">
-        <i class="fa-solid fa-cloud text-amber-400"></i>
-        <span>Project: <strong>pupsrc-jmap-qrcodescanner</strong></span>
-      </div>
+      <h1 class="text-2xl font-bold text-pup-maroon text-center">JMAP Membership & Partner Portal</h1>
+      <p class="text-sm text-slate-500 mt-2">Web Client v2.0</p>
     </div>
-  </header>
 
-  <!-- Navigation Tabs -->
-  <div class="bg-white border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 flex space-x-8 text-sm font-semibold overflow-x-auto whitespace-nowrap">
-      <button onclick="switchTab('students')" id="tab-students" class="py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2">
-        <i class="fa-solid fa-users"></i> Student Roster (<span id="student-count">0</span>)
+    <!-- Login Tabs -->
+    <div class="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6 flex text-sm font-semibold">
+      <button id="tab-login-admin" onclick="switchLoginTab('admin')" class="flex-1 py-3 text-center bg-pup-maroon text-white">Admin Login</button>
+      <button id="tab-login-partner" onclick="switchLoginTab('partner')" class="flex-1 py-3 text-center text-slate-500 bg-slate-100">Select Partners</button>
+    </div>
+
+    <!-- Admin Login Form -->
+    <div id="form-admin" class="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <h2 class="text-lg font-bold text-pup-maroon mb-4"><i class="fa-solid fa-user-shield text-pup-gold mr-2"></i> Admin Portal</h2>
+      <div id="admin-error" class="hidden mb-3 text-red-600 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <input type="text" id="admin-user" placeholder="Username" class="w-full mb-3 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:border-pup-maroon">
+      <input type="password" id="admin-pass" placeholder="Password" class="w-full mb-6 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:border-pup-maroon">
+      <button onclick="loginAdmin()" class="w-full bg-pup-maroon text-white font-bold py-3 rounded-lg shadow-md hover:bg-red-900 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
       </button>
-      <button onclick="switchTab('scans')" id="tab-scans" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-qrcode"></i> Live Scan Logs (<span id="scan-count">0</span>)
-      </button>
-      <button onclick="switchTab('businesses')" id="tab-businesses" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-store"></i> Partner Stores (<span id="business-count">0</span>)
-      </button>
-      <button onclick="switchTab('redemptions')" id="tab-redemptions" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-ticket"></i> Voucher Redemptions (<span id="redemption-count">0</span>)
-      </button>
-      <button onclick="switchTab('scanner')" id="tab-scanner" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-camera"></i> Web Scanner
+    </div>
+
+    <!-- Partner Login Form -->
+    <div id="form-partner" class="w-full bg-white p-6 rounded-xl shadow-sm border border-slate-200 hidden">
+      <h2 class="text-lg font-bold text-pup-maroon mb-4"><i class="fa-solid fa-store text-pup-gold mr-2"></i> Partner Cashier</h2>
+      <div id="partner-error" class="hidden mb-3 text-red-600 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      
+      <select id="partner-select" class="w-full mb-3 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:border-pup-maroon appearance-none bg-white">
+        <option value="">Loading partners...</option>
+      </select>
+      
+      <input type="password" id="partner-pin" placeholder="4-Digit Store PIN" maxlength="4" class="w-full mb-6 px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:border-pup-maroon text-center tracking-[0.5em] font-mono text-lg">
+      <button onclick="loginPartner()" class="w-full bg-pup-gold text-red-900 font-bold py-3 rounded-lg shadow-md hover:bg-yellow-500 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-qrcode"></i> Unlock Camera Scanner
       </button>
     </div>
   </div>
 
-  <main class="max-w-7xl mx-auto px-6 py-8">
 
-    <!-- TAB 1: Students Roster -->
-    <section id="view-students">
-      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-        <div class="relative w-full sm:w-96">
-          <input type="text" id="search-student" onkeyup="filterStudents()" placeholder="Search student name or ID..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-red-800 bg-white shadow-sm">
-          <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+  <!-- ==================== MAIN APP ==================== -->
+  <div id="screen-main" class="hidden flex-1 flex flex-col h-screen">
+    
+    <!-- Top Header -->
+    <header class="bg-pup-maroon text-white p-4 shadow-md z-10 flex items-center justify-between sticky top-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-pup-gold flex items-center justify-center font-bold text-pup-maroon text-xs border border-white">PUP</div>
+        <h1 id="app-title" class="font-bold text-lg">Scanner</h1>
+      </div>
+      <div id="header-user-badge" class="text-xs bg-red-950 px-2 py-1 rounded border border-red-800">Admin</div>
+    </header>
+
+    <div class="content-area bg-slate-50 relative" id="content-area">
+      
+      <!-- VIEW: SCANNER -->
+      <div id="view-scanner" class="p-4 hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-pup-maroon"><i class="fa-solid fa-camera mr-2"></i> QR Scanner</h2>
+            <button onclick="resetScanner()" class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full"><i class="fa-solid fa-rotate-right mr-1"></i>Reset</button>
+          </div>
+          
+          <div id="reader" class="bg-black w-full min-h-[300px] rounded-lg"></div>
+          
+          <!-- Scan Result Modal/Card -->
+          <div id="scan-result" class="hidden mt-4 p-4 rounded-xl border-2 text-center animate-fade-in">
+            <div id="scan-badge" class="inline-block px-4 py-1 rounded-full text-sm font-bold mb-2"></div>
+            <h3 id="scan-name" class="text-xl font-bold text-slate-800"></h3>
+            <p id="scan-id" class="text-slate-500 font-mono text-sm mt-1"></p>
+            <p id="scan-notes" class="text-slate-500 text-xs mt-2 italic"></p>
+          </div>
         </div>
-        <button onclick="openAddStudentModal()" class="w-full sm:w-auto maroon-bg text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-red-900 transition flex items-center justify-center gap-2 shadow">
-          <i class="fa-solid fa-plus"></i> Add New Student
+
+        <!-- Recent Scans (Admin Only) -->
+        <div id="recent-scans-card" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 admin-only">
+          <h2 class="font-bold text-pup-maroon mb-3"><i class="fa-solid fa-history mr-2"></i> Recent Scans</h2>
+          <div id="recent-scans-list" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- VIEW: DIRECTORY (ROSTER) -->
+      <div id="view-directory" class="p-4 hidden admin-only">
+        <div class="flex gap-2 mb-4">
+          <input type="text" id="search-student" onkeyup="renderStudents()" placeholder="Search directory..." class="flex-1 px-4 py-2 rounded-lg border border-slate-300 text-sm">
+          <button onclick="openModal('modal-add-student')" class="bg-pup-maroon text-white px-4 py-2 rounded-lg shadow"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <div id="student-list" class="space-y-3"></div>
+      </div>
+
+      <!-- VIEW: CARD GENERATOR (Sub-view of Directory) -->
+      <div id="view-cardgen" class="p-4 hidden admin-only">
+        <button onclick="navTo('directory')" class="mb-4 text-pup-maroon font-bold text-sm"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Directory</button>
+        
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden max-w-sm mx-auto" id="id-card-element">
+          <div class="bg-pup-maroon p-6 text-center text-white relative">
+            <div class="absolute top-4 right-4 w-12 h-12 bg-pup-gold rounded-full border-2 border-white flex items-center justify-center text-pup-maroon font-bold text-xs">JMAP</div>
+            <h2 class="text-2xl font-bold tracking-wider mb-1">MEMBER PASS</h2>
+            <p class="text-yellow-200 text-xs">PUP SANTA ROSA CAMPUS</p>
+          </div>
+          <div class="p-8 flex flex-col items-center bg-slate-50 relative">
+            <div class="w-48 h-48 bg-white p-2 rounded-xl shadow-inner border border-slate-200 mb-6 relative">
+              <canvas id="qr-canvas" class="w-full h-full"></canvas>
+            </div>
+            <h3 id="card-name" class="text-xl font-bold text-slate-800 text-center w-full truncate"></h3>
+            <p id="card-id" class="text-pup-maroon font-mono text-sm font-bold mt-1 tracking-widest"></p>
+            <div class="w-full h-px bg-slate-200 my-4"></div>
+            <p id="card-dept" class="text-slate-500 text-xs text-center uppercase tracking-wider"></p>
+            <p id="card-sem" class="text-slate-400 text-xs text-center mt-1"></p>
+          </div>
+        </div>
+        <button onclick="window.print()" class="w-full mt-6 bg-pup-gold text-pup-maroon font-bold py-3 rounded-xl shadow-md"><i class="fa-solid fa-print mr-2"></i> Print / Save as PDF</button>
+      </div>
+
+      <!-- VIEW: BUSINESSES & VOUCHERS -->
+      <div id="view-businesses" class="p-4 hidden admin-only">
+        
+        <div class="flex bg-slate-200 p-1 rounded-lg mb-4 text-sm font-bold">
+          <button id="subtab-biz" onclick="switchBizTab('biz')" class="flex-1 py-2 rounded-md bg-white text-pup-maroon shadow-sm">Stores</button>
+          <button id="subtab-vouch" onclick="switchBizTab('vouch')" class="flex-1 py-2 rounded-md text-slate-500">Vouchers</button>
+        </div>
+
+        <div id="panel-biz">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-slate-700">Partner Stores</h3>
+            <button onclick="openModal('modal-add-biz')" class="text-xs bg-pup-maroon text-white px-3 py-1.5 rounded"><i class="fa-solid fa-plus mr-1"></i>Add</button>
+          </div>
+          <div id="biz-list" class="space-y-3"></div>
+        </div>
+
+        <div id="panel-vouch" class="hidden">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-bold text-slate-700">Discount Vouchers</h3>
+            <button onclick="openModal('modal-add-vouch')" class="text-xs bg-pup-gold text-pup-maroon font-bold px-3 py-1.5 rounded shadow"><i class="fa-solid fa-plus mr-1"></i>Add</button>
+          </div>
+          <div id="vouch-list" class="space-y-3"></div>
+        </div>
+
+      </div>
+
+      <!-- VIEW: SETTINGS -->
+      <div id="view-settings" class="p-4 hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
+          <div class="flex items-center gap-3 mb-4">
+            <i class="fa-solid fa-cloud text-emerald-500 text-2xl"></i>
+            <div>
+              <h3 class="font-bold text-slate-800">Firebase Firestore</h3>
+              <p class="text-xs text-emerald-600 font-bold">Connected & Syncing</p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500">Database is active and syncing in real-time across all devices.</p>
+        </div>
+        
+        <button onclick="logout()" class="w-full bg-red-50 text-red-600 border border-red-200 font-bold py-3 rounded-xl shadow-sm flex items-center justify-center gap-2">
+          <i class="fa-solid fa-right-from-bracket"></i> Log Out
         </button>
       </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <table class="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
-              <th class="py-3.5 px-4">Student ID</th>
-              <th class="py-3.5 px-4">Full Name</th>
-              <th class="py-3.5 px-4">Department</th>
-              <th class="py-3.5 px-4">Active Semester</th>
-              <th class="py-3.5 px-4">Status</th>
-              <th class="py-3.5 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="student-table-body" class="divide-y divide-slate-100 text-slate-700">
-            <tr>
-              <td colspan="6" class="py-12 text-center text-slate-400">Loading student directory from Firebase Firestore...</td>
-            </tr>
-          </tbody>
-        </table>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="nav-item admin-only" id="nav-directory" onclick="navTo('directory')">
+        <i class="fa-solid fa-users"></i><span>Directory</span>
       </div>
-    </section>
-
-    <!-- TAB 2: Scan Logs -->
-    <section id="view-scans" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700 flex justify-between items-center">
-          <span><i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Realtime Entrance Scan History</span>
-          <span class="text-xs font-normal text-slate-500">Auto-updates live from mobile app scans</span>
-        </div>
-        <table class="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
-              <th class="py-3.5 px-4">Timestamp</th>
-              <th class="py-3.5 px-4">Student Name</th>
-              <th class="py-3.5 px-4">Student ID</th>
-              <th class="py-3.5 px-4">Status</th>
-              <th class="py-3.5 px-4">Semester</th>
-              <th class="py-3.5 px-4">Notes</th>
-            </tr>
-          </thead>
-          <tbody id="scan-table-body" class="divide-y divide-slate-100 text-slate-700">
-            <tr><td colspan="6" class="py-12 text-center text-slate-400">No scan logs recorded yet.</td></tr>
-          </tbody>
-        </table>
+      <div class="nav-item nav-fab-container" id="nav-scanner" onclick="navTo('scanner')">
+        <div class="nav-fab"><i class="fa-solid fa-qrcode"></i></div>
       </div>
-    </section>
-
-    <!-- TAB 3: Partner Stores -->
-    <section id="view-businesses" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-store text-red-800"></i> Registered Partner Stores
-        </h3>
-        <div id="business-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <!-- Populated live -->
-        </div>
+      <div class="nav-item admin-only" id="nav-businesses" onclick="navTo('businesses')">
+        <i class="fa-solid fa-store"></i><span>Businesses</span>
       </div>
-    </section>
-
-    <!-- TAB 4: Redemptions -->
-    <section id="view-redemptions" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
-          <i class="fa-solid fa-gift text-emerald-600 mr-2"></i> Monthly Discount Voucher Usage Logs
-        </div>
-        <table class="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
-              <th class="py-3.5 px-4">Time</th>
-              <th class="py-3.5 px-4">Student</th>
-              <th class="py-3.5 px-4">Partner Store</th>
-              <th class="py-3.5 px-4">Voucher Title</th>
-              <th class="py-3.5 px-4">Month/Year</th>
-            </tr>
-          </thead>
-          <tbody id="redemption-table-body" class="divide-y divide-slate-100 text-slate-700">
-            <tr><td colspan="5" class="py-12 text-center text-slate-400">No voucher redemptions logged yet.</td></tr>
-          </tbody>
-        </table>
+      <div class="nav-item" id="nav-settings" onclick="navTo('settings')">
+        <i class="fa-solid fa-gear"></i><span>Settings</span>
       </div>
-    </section>
-
-
-    <!-- TAB 5: Web Scanner -->
-    <section id="view-scanner" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto p-6 text-center max-w-lg mx-auto">
-        <h3 class="text-xl font-bold maroon-text mb-2">Web QR Scanner</h3>
-        <p class="text-sm text-slate-500 mb-6">Requesting camera permissions to scan student IDs directly from this device.</p>
-        <div id="reader" class="mx-auto w-full max-w-sm rounded overflow-x-auto shadow-inner border border-slate-300"></div>
-        <div id="scan-result" class="mt-6 hidden">
-          <div id="scan-badge" class="px-4 py-2 rounded-xl text-lg font-bold mb-2"></div>
-          <p id="scan-name" class="font-bold text-slate-800 text-xl"></p>
-          <p id="scan-id" class="text-slate-600 font-mono text-sm"></p>
-          <button onclick="resetScanner()" class="mt-4 px-6 py-2 bg-slate-200 hover:bg-slate-300 rounded-xl font-semibold text-slate-700 transition">Scan Next</button>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Add Student Modal -->
-  <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
-      <h2 class="text-xl font-bold maroon-text mb-4">Register New Student</h2>
-      <form id="add-student-form" onsubmit="saveStudent(event)">
-        <div class="space-y-3 text-sm">
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Student ID (PUP Format)</label>
-            <input type="text" id="m-id" required placeholder="2026-00107-SR-0" class="w-full px-3 py-2 border rounded-xl">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
-            <input type="text" id="m-name" required placeholder="Juan Dela Cruz" class="w-full px-3 py-2 border rounded-xl">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">PUP Webmail</label>
-            <input type="email" id="m-email" placeholder="juan.delacruz@iskolarngbayan.pup.edu.ph" class="w-full px-3 py-2 border rounded-xl">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Department</label>
-            <input type="text" id="m-dept" value="BSBA - Marketing Management" class="w-full px-3 py-2 border rounded-xl">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-700 mb-1">Active Semester</label>
-            <input type="text" id="m-sem" value="2026-2027 | 1st Semester" class="w-full px-3 py-2 border rounded-xl">
-          </div>
-          <div class="flex items-center gap-2 pt-2">
-            <input type="checkbox" id="m-paid" class="w-4 h-4 text-red-800 rounded" checked>
-            <label for="m-paid" class="font-semibold text-slate-700">Membership Dues Paid</label>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 mt-6">
-          <button type="button" onclick="closeAddStudentModal()" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl maroon-bg text-white font-semibold shadow hover:bg-red-900">Save to Cloud</button>
-        </div>
-      </form>
     </div>
   </div>
 
-  <!-- Firebase v10 Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Firebase Config using your google-services.json details
-    const firebaseConfig = {
-      apiKey: "AIzaSyDPdFPZIfPGIJXdgDdSyxpUW1SJtwFjqWQ",
-      authDomain: "pupsrc-jmap-qrcodescanner.firebaseapp.com",
-      projectId: "pupsrc-jmap-qrcodescanner",
-      storageBucket: "pupsrc-jmap-qrcodescanner.firebasestorage.app",
-      messagingSenderId: "574456278067",
-      appId: "1:574456278067:android:d24601aada2da8b5e24746"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    window.db = db;
-
-    window.allStudentsCache = [];
-
-    // 1. Listen for Realtime Students
-    onSnapshot(collection(db, "students"), (snapshot) => {
-      const students = [];
-      snapshot.forEach((doc) => students.push({ id: doc.id, ...doc.data() }));
-      window.allStudentsCache = students;
-      document.getElementById('student-count').innerText = students.length;
-      renderStudents(students);
-    });
-
-    // 2. Listen for Scan Logs
-    onSnapshot(collection(db, "scan_logs"), (snapshot) => {
-      const logs = [];
-      snapshot.forEach((doc) => logs.push({ id: doc.id, ...doc.data() }));
-      logs.sort((a,b) => (b.scannedAt || 0) - (a.scannedAt || 0));
-      document.getElementById('scan-count').innerText = logs.length;
-      renderScans(logs);
-    });
-
-    // 3. Listen for Businesses
-    onSnapshot(collection(db, "businesses"), (snapshot) => {
-      const list = [];
-      snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
-      document.getElementById('business-count').innerText = list.length;
-      renderBusinesses(list);
-    });
-
-    // 4. Listen for Voucher Redemptions
-    onSnapshot(collection(db, "voucher_redemptions"), (snapshot) => {
-      const list = [];
-      snapshot.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
-      list.sort((a,b) => (b.redeemedAt || 0) - (a.redeemedAt || 0));
-      document.getElementById('redemption-count').innerText = list.length;
-      renderRedemptions(list);
-    });
-
-    // Render Functions
-    function renderStudents(students) {
-      const tbody = document.getElementById('student-table-body');
-      if (students.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No students registered in Firestore.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = students.map(s => `
-        <tr class="hover:bg-slate-50 transition">
-          <td class="py-3 px-4 font-mono text-xs font-bold text-red-900">${s.studentId || s.id}</td>
-          <td class="py-3 px-4 font-semibold text-slate-900">${s.fullName || 'N/A'}</td>
-          <td class="py-3 px-4 text-xs text-slate-500">${s.department || ''}</td>
-          <td class="py-3 px-4 text-xs text-slate-600">${s.activeSemester || ''}</td>
-          <td class="py-3 px-4">
-            ${s.isMembershipPaid 
-              ? `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1"></i> Paid</span>`
-              : `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1"></i> Pending</span>`}
-          </td>
-          <td class="py-3 px-4 text-right">
-            <button onclick="togglePayment('${s.studentId || s.id}', ${!s.isMembershipPaid})" class="text-xs text-blue-600 hover:underline mr-3">
-              ${s.isMembershipPaid ? 'Mark Pending' : 'Mark Paid'}
-            </button>
-            <button onclick="deleteStudentCloud('${s.studentId || s.id}')" class="text-xs text-red-600 hover:underline">Delete</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderScans(logs) {
-      const tbody = document.getElementById('scan-table-body');
-      if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No scan history in cloud.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = logs.map(l => {
-        const time = l.scannedAt ? new Date(l.scannedAt).toLocaleString() : 'N/A';
-        let badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800">VALID</span>`;
-        if (l.status === 'EXPIRED_SEMESTER') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">EXPIRED</span>`;
-        if (l.status === 'NOT_FOUND') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800">NOT FOUND</span>`;
-        if (l.status === 'PAYMENT_PENDING') badge = `<span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">PENDING DUES</span>`;
-
-        return `
-          <tr class="hover:bg-slate-50">
-            <td class="py-3 px-4 text-xs font-mono text-slate-500">${time}</td>
-            <td class="py-3 px-4 font-semibold text-slate-800">${l.studentName || 'Unknown'}</td>
-            <td class="py-3 px-4 font-mono text-xs text-slate-600">${l.studentId || ''}</td>
-            <td class="py-3 px-4">${badge}</td>
-            <td class="py-3 px-4 text-xs text-slate-500">${l.scannedSemester || ''}</td>
-            <td class="py-3 px-4 text-xs text-slate-500">${l.notes || ''}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function renderBusinesses(list) {
-      const container = document.getElementById('business-grid');
-      if (list.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-sm">No partner stores synced.</p>`;
-        return;
-      }
-      container.innerHTML = list.map(b => `
-        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 flex justify-between items-center">
-          <div>
-            <h4 class="font-bold text-red-950">${b.name}</h4>
-            <p class="text-xs text-slate-500">${b.category}</p>
+  <!-- ==================== MODALS ==================== -->
+  
+  <!-- Add/Edit Student Modal -->
+  <div id="modal-add-student" class="fixed inset-0 bg-black/60 z-[100] hidden flex-col justify-end sm:justify-center sm:p-4">
+    <div class="bg-white w-full max-w-[600px] mx-auto rounded-t-2xl sm:rounded-2xl p-6 h-[80vh] sm:h-auto flex flex-col shadow-2xl relative animate-slide-up">
+      <button onclick="closeModal('modal-add-student')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+      <h2 class="text-xl font-bold text-pup-maroon mb-4" id="modal-student-title">Add Student</h2>
+      <div class="overflow-y-auto flex-1 pb-4">
+        <input type="hidden" id="f-stu-mode" value="add">
+        <div class="space-y-4 text-sm">
+          <div><label class="block font-bold mb-1">Student ID *</label><input type="text" id="f-stu-id" class="w-full p-3 border rounded-lg bg-slate-50" placeholder="2026-00101-SR-0"></div>
+          <div><label class="block font-bold mb-1">Full Name *</label><input type="text" id="f-stu-name" class="w-full p-3 border rounded-lg bg-slate-50"></div>
+          <div><label class="block font-bold mb-1">Email</label><input type="email" id="f-stu-email" class="w-full p-3 border rounded-lg bg-slate-50"></div>
+          <div><label class="block font-bold mb-1">Department</label><input type="text" id="f-stu-dept" class="w-full p-3 border rounded-lg bg-slate-50" value="BSBA - Marketing Management"></div>
+          <div><label class="block font-bold mb-1">Semester</label><input type="text" id="f-stu-sem" class="w-full p-3 border rounded-lg bg-slate-50" value="2026-2027 | 1st Semester"></div>
+          <div class="flex items-center gap-2 p-3 bg-slate-50 border rounded-lg">
+            <input type="checkbox" id="f-stu-paid" class="w-5 h-5 accent-pup-maroon" checked>
+            <label class="font-bold">Membership Paid</label>
           </div>
-          <span class="text-xs font-mono bg-white px-2.5 py-1 rounded border font-semibold text-slate-700">PIN: ${b.pin}</span>
         </div>
-      `).join('');
+      </div>
+      <button onclick="saveStudent()" class="w-full bg-pup-maroon text-white font-bold py-3 rounded-xl mt-2 shadow">Save Student</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Business Modal -->
+  <div id="modal-add-biz" class="fixed inset-0 bg-black/60 z-[100] hidden flex-col justify-end sm:justify-center sm:p-4">
+    <div class="bg-white w-full max-w-[600px] mx-auto rounded-t-2xl sm:rounded-2xl p-6 relative animate-slide-up">
+      <button onclick="closeModal('modal-add-biz')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+      <h2 class="text-xl font-bold text-pup-maroon mb-4" id="modal-biz-title">Add Store</h2>
+      <input type="hidden" id="f-biz-id">
+      <div class="space-y-3 text-sm mb-6">
+        <div><label class="block font-bold mb-1">Store Name *</label><input type="text" id="f-biz-name" class="w-full p-3 border rounded-lg bg-slate-50"></div>
+        <div><label class="block font-bold mb-1">Category</label><input type="text" id="f-biz-cat" class="w-full p-3 border rounded-lg bg-slate-50" placeholder="Food & Beverage"></div>
+        <div><label class="block font-bold mb-1">4-Digit Login PIN *</label><input type="text" id="f-biz-pin" maxlength="4" class="w-full p-3 border rounded-lg bg-slate-50 font-mono text-center tracking-widest text-lg" placeholder="1234"></div>
+      </div>
+      <button onclick="saveBiz()" class="w-full bg-pup-maroon text-white font-bold py-3 rounded-xl shadow">Save Store</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Voucher Modal -->
+  <div id="modal-add-vouch" class="fixed inset-0 bg-black/60 z-[100] hidden flex-col justify-end sm:justify-center sm:p-4">
+    <div class="bg-white w-full max-w-[600px] mx-auto rounded-t-2xl sm:rounded-2xl p-6 relative animate-slide-up">
+      <button onclick="closeModal('modal-add-vouch')" class="absolute top-4 right-4 w-8 h-8 bg-slate-100 rounded-full text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+      <h2 class="text-xl font-bold text-pup-maroon mb-4" id="modal-vouch-title">Add Voucher</h2>
+      <input type="hidden" id="f-vouch-id">
+      <div class="space-y-3 text-sm mb-6">
+        <div>
+          <label class="block font-bold mb-1">Partner Store *</label>
+          <select id="f-vouch-store" class="w-full p-3 border rounded-lg bg-slate-50"></select>
+        </div>
+        <div><label class="block font-bold mb-1">Discount Title *</label><input type="text" id="f-vouch-title" class="w-full p-3 border rounded-lg bg-slate-50" placeholder="10% Off Meals"></div>
+        <div><label class="block font-bold mb-1">Description</label><textarea id="f-vouch-desc" class="w-full p-3 border rounded-lg bg-slate-50" rows="2"></textarea></div>
+      </div>
+      <button onclick="saveVouch()" class="w-full bg-pup-maroon text-white font-bold py-3 rounded-xl shadow">Save Voucher</button>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- SCRIPTS -->
+<style>
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+</style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDPdFPZIfPGIJXdgDdSyxpUW1SJtwFjqWQ",
+    authDomain: "pupsrc-jmap-qrcodescanner.firebaseapp.com",
+    projectId: "pupsrc-jmap-qrcodescanner",
+    storageBucket: "pupsrc-jmap-qrcodescanner.firebasestorage.app",
+    messagingSenderId: "574456278067",
+    appId: "1:574456278067:android:d24601aada2da8b5e24746"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+
+  // Global State
+  window.state = {
+    students: [], businesses: [], vouchers: [], logs: [], 
+    userRole: null, // 'admin' or 'partner'
+    partnerId: null, partnerName: null
+  };
+
+  // Listeners
+  onSnapshot(collection(window.db, "students"), snap => {
+    window.state.students = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    if(window.currentView === 'directory') renderStudents();
+  });
+  
+  onSnapshot(collection(window.db, "businesses"), snap => {
+    window.state.businesses = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    populatePartnerDropdowns();
+    if(window.currentView === 'businesses') renderBusinesses();
+  });
+
+  onSnapshot(collection(window.db, "vouchers"), snap => {
+    window.state.vouchers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    if(window.currentView === 'businesses') renderVouchers();
+  });
+
+  onSnapshot(collection(window.db, "scan_logs"), snap => {
+    window.state.logs = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.scannedAt - a.scannedAt);
+    if(window.currentView === 'scanner') renderRecentScans();
+  });
+</script>
+
+<script>
+  window.currentView = null;
+  let html5QrcodeScanner = null;
+  let qr = null;
+
+  // --- LOGIN LOGIC ---
+  function switchLoginTab(tab) {
+    if(tab === 'admin') {
+      document.getElementById('tab-login-admin').className = "flex-1 py-3 text-center bg-pup-maroon text-white";
+      document.getElementById('tab-login-partner').className = "flex-1 py-3 text-center text-slate-500 bg-slate-100";
+      document.getElementById('form-admin').classList.remove('hidden');
+      document.getElementById('form-partner').classList.add('hidden');
+    } else {
+      document.getElementById('tab-login-partner').className = "flex-1 py-3 text-center bg-pup-gold text-red-900 font-bold";
+      document.getElementById('tab-login-admin').className = "flex-1 py-3 text-center text-slate-500 bg-slate-100";
+      document.getElementById('form-partner').classList.remove('hidden');
+      document.getElementById('form-admin').classList.add('hidden');
+    }
+  }
+
+  function populatePartnerDropdowns() {
+    const sel = document.getElementById('partner-select');
+    const vSel = document.getElementById('f-vouch-store');
+    let opts = '<option value="">Select a Store...</option>';
+    window.state.businesses.forEach(b => {
+      opts += `<option value="${b.id}" data-pin="${b.pin}">${b.name}</option>`;
+    });
+    if(sel) sel.innerHTML = opts;
+    if(vSel) vSel.innerHTML = opts;
+  }
+
+  function loginAdmin() {
+    const u = document.getElementById('admin-user').value.trim();
+    const p = document.getElementById('admin-pass').value.trim();
+    const err = document.getElementById('admin-error');
+    if(u === 'admin' && p === 'jmapup') { // Simple client-side auth for demo
+      window.state.userRole = 'admin';
+      startApp();
+    } else {
+      err.innerText = "Invalid admin credentials!";
+      err.classList.remove('hidden');
+    }
+  }
+
+  function loginPartner() {
+    const sel = document.getElementById('partner-select');
+    const pin = document.getElementById('partner-pin').value.trim();
+    const err = document.getElementById('partner-error');
+    
+    if(sel.selectedIndex <= 0) { err.innerText="Select a store"; err.classList.remove('hidden'); return; }
+    const selectedOpt = sel.options[sel.selectedIndex];
+    const realPin = selectedOpt.getAttribute('data-pin');
+    
+    if(pin === realPin) {
+      window.state.userRole = 'partner';
+      window.state.partnerId = selectedOpt.value;
+      window.state.partnerName = selectedOpt.innerText;
+      startApp();
+    } else {
+      err.innerText = "Incorrect PIN!";
+      err.classList.remove('hidden');
+    }
+  }
+
+  function logout() {
+    window.state.userRole = null;
+    document.getElementById('screen-main').classList.add('hidden');
+    document.getElementById('screen-login').classList.remove('hidden');
+    if(html5QrcodeScanner) { html5QrcodeScanner.clear(); html5QrcodeScanner = null; }
+    
+    document.getElementById('admin-user').value = '';
+    document.getElementById('admin-pass').value = '';
+    document.getElementById('partner-pin').value = '';
+    document.getElementById('admin-error').classList.add('hidden');
+    document.getElementById('partner-error').classList.add('hidden');
+  }
+
+  function startApp() {
+    document.getElementById('screen-login').classList.add('hidden');
+    document.getElementById('screen-main').classList.remove('hidden');
+    
+    // Setup UI based on role
+    const adminEls = document.querySelectorAll('.admin-only');
+    if(window.state.userRole === 'admin') {
+      adminEls.forEach(el => el.classList.remove('hidden'));
+      document.getElementById('header-user-badge').innerText = "Admin Portal";
+      document.getElementById('header-user-badge').className = "text-xs bg-red-950 px-2 py-1 rounded text-white";
+    } else {
+      adminEls.forEach(el => el.classList.add('hidden'));
+      document.getElementById('header-user-badge').innerText = window.state.partnerName;
+      document.getElementById('header-user-badge').className = "text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-bold border border-yellow-300";
+    }
+    
+    navTo('scanner');
+  }
+
+  // --- NAVIGATION ---
+  function navTo(view) {
+    window.currentView = view;
+    // Update Title
+    const titles = { 'directory':'Directory', 'scanner':'QR Scanner', 'businesses':'Stores & Vouchers', 'settings':'Settings', 'cardgen': 'ID Generator' };
+    document.getElementById('app-title').innerText = titles[view] || 'App';
+    
+    // Hide all views
+    ['view-directory', 'view-scanner', 'view-businesses', 'view-settings', 'view-cardgen'].forEach(v => {
+      document.getElementById(v).classList.add('hidden');
+    });
+    document.getElementById('view-' + view).classList.remove('hidden');
+
+    // Update Nav bar icons
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if(document.getElementById('nav-'+view)) document.getElementById('nav-'+view).classList.add('active');
+
+    // Trigger view-specific logic
+    if(view === 'scanner') initScanner();
+    else if(html5QrcodeScanner) { html5QrcodeScanner.pause(true); }
+
+    if(view === 'directory') renderStudents();
+    if(view === 'businesses') { renderBusinesses(); renderVouchers(); switchBizTab('biz'); }
+    if(view === 'scanner') renderRecentScans();
+  }
+
+  // --- SCANNER ---
+  function initScanner() {
+    document.getElementById('scan-result').classList.add('hidden');
+    document.getElementById('reader').classList.remove('hidden');
+    if (!html5QrcodeScanner) {
+      html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250}, aspectRatio: 1.0 }, false);
+      html5QrcodeScanner.render(onScanSuccess, () => {});
+    } else {
+      html5QrcodeScanner.resume();
+    }
+  }
+
+  function resetScanner() {
+    initScanner();
+  }
+
+  async function onScanSuccess(decodedText) {
+    if (html5QrcodeScanner) html5QrcodeScanner.pause(true);
+    let studentId = decodedText;
+    try { const j = JSON.parse(decodedText); if(j.studentId) studentId = j.studentId; } catch(e){}
+
+    document.getElementById('reader').classList.add('hidden');
+    const resDiv = document.getElementById('scan-result');
+    const badge = document.getElementById('scan-badge');
+    const nameEl = document.getElementById('scan-name');
+    const idEl = document.getElementById('scan-id');
+    const notesEl = document.getElementById('scan-notes');
+    
+    resDiv.classList.remove('hidden');
+    nameEl.innerText = "Checking Cloud...";
+    idEl.innerText = studentId;
+    notesEl.innerText = "";
+    badge.className = "inline-block px-4 py-1 rounded-full text-sm font-bold mb-2 bg-slate-200 text-slate-800";
+    badge.innerText = "VERIFYING";
+
+    try {
+      const { getDoc, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      const sDoc = await getDoc(doc(window.db, "students", studentId));
+      
+      let status = "NOT_FOUND";
+      let student = null;
+      let notes = window.state.userRole === 'admin' ? "Scanned at Entrance" : `Scanned at ${window.state.partnerName}`;
+
+      if (sDoc.exists()) {
+        student = sDoc.data();
+        status = student.isMembershipPaid ? "VALID" : "PAYMENT_PENDING";
+      }
+
+      // UI
+      nameEl.innerText = student ? student.fullName : "Unknown Student";
+      
+      if(status === "VALID") {
+        badge.className = "inline-block px-6 py-2 rounded-full text-lg font-bold mb-2 bg-emerald-100 text-emerald-800 border border-emerald-300";
+        badge.innerText = "VALID MEMBER";
+        resDiv.className = "mt-4 p-6 rounded-2xl text-center animate-fade-in bg-white border-4 border-emerald-500 shadow-xl";
+      } else if (status === "PAYMENT_PENDING") {
+        badge.className = "inline-block px-6 py-2 rounded-full text-lg font-bold mb-2 bg-amber-100 text-amber-800 border border-amber-300";
+        badge.innerText = "EXPIRED / UNPAID";
+        resDiv.className = "mt-4 p-6 rounded-2xl text-center animate-fade-in bg-white border-4 border-amber-500 shadow-xl";
+        notesEl.innerText = "Membership dues are pending for current semester.";
+      } else {
+        badge.className = "inline-block px-6 py-2 rounded-full text-lg font-bold mb-2 bg-red-100 text-red-800 border border-red-300";
+        badge.innerText = "INVALID RECORD";
+        resDiv.className = "mt-4 p-6 rounded-2xl text-center animate-fade-in bg-white border-4 border-red-500 shadow-xl";
+        notesEl.innerText = "Not found in JMAP Database.";
+      }
+
+      // Log to Firestore
+      const logId = Date.now().toString();
+      await setDoc(doc(window.db, "scan_logs", logId), {
+        studentId: studentId,
+        studentName: student ? student.fullName : "Unknown",
+        scannedSemester: student ? student.activeSemester : "N/A",
+        department: student ? student.department : "N/A",
+        status: status,
+        scannedAt: Date.now(),
+        notes: notes
+      });
+
+    } catch (e) {
+      console.error(e);
+      badge.innerText = "NETWORK ERROR";
+    }
+  }
+
+  function renderRecentScans() {
+    if(window.state.userRole !== 'admin') return;
+    const container = document.getElementById('recent-scans-list');
+    const logs = window.state.logs.slice(0, 10);
+    
+    if(logs.length === 0) {
+      container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">No scans recorded.</p>`;
+      return;
     }
 
-    function renderRedemptions(list) {
-      const tbody = document.getElementById('redemption-table-body');
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No voucher redemptions logged.</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = list.map(r => `
-        <tr class="hover:bg-slate-50">
-          <td class="py-3 px-4 text-xs font-mono text-slate-500">${r.redeemedAt ? new Date(r.redeemedAt).toLocaleString() : ''}</td>
-          <td class="py-3 px-4 font-semibold">${r.studentName}</td>
-          <td class="py-3 px-4 text-slate-700 font-medium">${r.businessName}</td>
-          <td class="py-3 px-4 text-xs font-bold text-emerald-700">${r.discountTitle}</td>
-          <td class="py-3 px-4 text-xs text-slate-500">${r.monthYear}</td>
-        </tr>
-      `).join('');
+    container.innerHTML = logs.map(l => {
+      let icon = l.status === 'VALID' ? '<i class="fa-solid fa-circle-check text-emerald-500"></i>' : 
+                 (l.status === 'PAYMENT_PENDING' ? '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>' : '<i class="fa-solid fa-circle-xmark text-red-500"></i>');
+      let time = new Date(l.scannedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      return `
+        <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-lg">
+          <div class="flex items-center gap-3">
+            <div class="text-lg">${icon}</div>
+            <div>
+              <p class="font-bold text-slate-800 text-sm">${l.studentName}</p>
+              <p class="text-[10px] text-slate-500">${l.notes}</p>
+            </div>
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono">${time}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+
+  // --- DIRECTORY ---
+  function renderStudents() {
+    const query = document.getElementById('search-student').value.toLowerCase();
+    const container = document.getElementById('student-list');
+    let filtered = window.state.students;
+    if(query) {
+      filtered = filtered.filter(s => s.fullName.toLowerCase().includes(query) || s.studentId.toLowerCase().includes(query));
     }
 
-    // Window global action bindings for HTML buttons
-    window.togglePayment = async (id, newPaidState) => {
-      await setDoc(doc(db, "students", id), { isMembershipPaid: newPaidState, updatedAt: Date.now() }, { merge: true });
-    };
+    if(filtered.length === 0) {
+      container.innerHTML = `<p class="text-slate-400 text-center py-8">No students found.</p>`;
+      return;
+    }
 
-    window.deleteStudentCloud = async (id) => {
-      if (confirm(`Delete student ${id} from Cloud Firestore?`)) {
-        await deleteDoc(doc(db, "students", id));
-      }
-    };
+    container.innerHTML = filtered.map(s => {
+      let badge = s.isMembershipPaid 
+        ? `<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold">PAID</span>`
+        : `<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-[10px] font-bold">PENDING</span>`;
+      
+      return `
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <h3 class="font-bold text-pup-maroon text-sm">${s.fullName}</h3>
+            <p class="text-xs font-mono text-slate-500">${s.studentId || s.id}</p>
+          </div>
+          ${badge}
+        </div>
+        <p class="text-[10px] text-slate-500 mb-3">${s.activeSemester}</p>
+        <div class="flex gap-2 border-t pt-3">
+          <button onclick="generateCard('${s.id}')" class="flex-1 py-1.5 bg-pup-gold text-pup-maroon font-bold text-xs rounded shadow-sm"><i class="fa-solid fa-id-card mr-1"></i> ID Pass</button>
+          <button onclick="editStudent('${s.id}')" class="px-3 py-1.5 bg-slate-100 text-slate-600 rounded"><i class="fa-solid fa-pen"></i></button>
+          <button onclick="delStudent('${s.id}')" class="px-3 py-1.5 bg-red-50 text-red-600 rounded"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+      `;
+    }).join('');
+  }
 
-    window.saveStudent = async (e) => {
-      e.preventDefault();
-      const id = document.getElementById('m-id').value.trim();
-      const name = document.getElementById('m-name').value.trim();
-      const email = document.getElementById('m-email').value.trim();
-      const dept = document.getElementById('m-dept').value.trim();
-      const sem = document.getElementById('m-sem').value.trim();
-      const paid = document.getElementById('m-paid').checked;
+  // --- CARD GEN ---
+  function generateCard(id) {
+    const student = window.state.students.find(s => s.id === id);
+    if(!student) return;
+    
+    document.getElementById('card-name').innerText = student.fullName;
+    document.getElementById('card-id').innerText = student.studentId || student.id;
+    document.getElementById('card-dept').innerText = student.department || 'JMAP Member';
+    document.getElementById('card-sem').innerText = student.activeSemester;
+    
+    if(!qr) {
+      qr = new QRious({ element: document.getElementById('qr-canvas'), size: 250, level: 'H' });
+    }
+    const payload = JSON.stringify({ studentId: student.studentId || student.id });
+    qr.value = payload;
+    
+    navTo('cardgen');
+  }
 
-      await setDoc(doc(db, "students", id), {
+  // --- BUSINESSES ---
+  function switchBizTab(tab) {
+    if(tab === 'biz') {
+      document.getElementById('subtab-biz').className = "flex-1 py-2 rounded-md bg-white text-pup-maroon shadow-sm";
+      document.getElementById('subtab-vouch').className = "flex-1 py-2 rounded-md text-slate-500";
+      document.getElementById('panel-biz').classList.remove('hidden');
+      document.getElementById('panel-vouch').classList.add('hidden');
+    } else {
+      document.getElementById('subtab-vouch').className = "flex-1 py-2 rounded-md bg-white text-pup-maroon shadow-sm";
+      document.getElementById('subtab-biz').className = "flex-1 py-2 rounded-md text-slate-500";
+      document.getElementById('panel-vouch').classList.remove('hidden');
+      document.getElementById('panel-biz').classList.add('hidden');
+    }
+  }
+
+  function renderBusinesses() {
+    const container = document.getElementById('biz-list');
+    if(window.state.businesses.length === 0) { container.innerHTML = `<p class="text-xs text-slate-400 text-center">No stores.</p>`; return; }
+    container.innerHTML = window.state.businesses.map(b => `
+      <div class="bg-white p-3 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
+        <div>
+          <h4 class="font-bold text-sm text-pup-maroon">${b.name}</h4>
+          <p class="text-[10px] text-slate-500">${b.category || 'Store'} | PIN: ${b.pin}</p>
+        </div>
+        <button onclick="delBiz('${b.id}')" class="text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `).join('');
+  }
+
+  function renderVouchers() {
+    const container = document.getElementById('vouch-list');
+    if(window.state.vouchers.length === 0) { container.innerHTML = `<p class="text-xs text-slate-400 text-center">No vouchers.</p>`; return; }
+    container.innerHTML = window.state.vouchers.map(v => `
+      <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm relative overflow-hidden">
+        <div class="absolute left-0 top-0 bottom-0 w-1 bg-pup-gold"></div>
+        <div class="flex justify-between items-start pl-2">
+          <div>
+            <h4 class="font-bold text-sm text-slate-800">${v.title}</h4>
+            <p class="text-[10px] font-bold text-pup-maroon mb-1">${v.partnerName}</p>
+            <p class="text-[10px] text-slate-500">${v.description}</p>
+          </div>
+          <button onclick="delVouch('${v.id}')" class="text-red-500 p-2"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // --- MODALS & CRUD ---
+  function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    document.getElementById(id).classList.add('flex');
+    if(id === 'modal-add-student') {
+      document.getElementById('f-stu-mode').value = 'add';
+      document.getElementById('f-stu-id').value = '';
+      document.getElementById('f-stu-name').value = '';
+      document.getElementById('f-stu-paid').checked = true;
+      document.getElementById('modal-student-title').innerText = "Add Student";
+    }
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    document.getElementById(id).classList.remove('flex');
+  }
+
+  async function saveStudent() {
+    const id = document.getElementById('f-stu-id').value.trim();
+    if(!id) return alert('ID required');
+    try {
+      const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await setDoc(doc(window.db, "students", id), {
         studentId: id,
-        fullName: name,
-        email: email,
-        department: dept,
-        activeSemester: sem,
-        isMembershipPaid: paid,
-        joinYear: "2026",
-        notes: "Added via Web Portal",
+        fullName: document.getElementById('f-stu-name').value,
+        email: document.getElementById('f-stu-email').value,
+        department: document.getElementById('f-stu-dept').value,
+        activeSemester: document.getElementById('f-stu-sem').value,
+        isMembershipPaid: document.getElementById('f-stu-paid').checked,
         updatedAt: Date.now()
+      }, {merge: true});
+      closeModal('modal-add-student');
+    } catch(e) { console.error(e); alert('Error saving'); }
+  }
+
+  function editStudent(id) {
+    const s = window.state.students.find(x => x.id === id);
+    if(!s) return;
+    document.getElementById('f-stu-id').value = s.studentId || s.id;
+    document.getElementById('f-stu-name').value = s.fullName || '';
+    document.getElementById('f-stu-email').value = s.email || '';
+    document.getElementById('f-stu-dept').value = s.department || '';
+    document.getElementById('f-stu-sem').value = s.activeSemester || '';
+    document.getElementById('f-stu-paid').checked = !!s.isMembershipPaid;
+    document.getElementById('f-stu-mode').value = 'edit';
+    document.getElementById('modal-student-title').innerText = "Edit Student";
+    document.getElementById('modal-add-student').classList.remove('hidden');
+    document.getElementById('modal-add-student').classList.add('flex');
+  }
+
+  async function delStudent(id) {
+    if(!confirm("Delete student?")) return;
+    try {
+      const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await deleteDoc(doc(window.db, "students", id));
+    } catch(e) { console.error(e); }
+  }
+
+  async function saveBiz() {
+    const name = document.getElementById('f-biz-name').value;
+    const pin = document.getElementById('f-biz-pin').value;
+    if(!name || !pin) return alert('Name and PIN required');
+    const id = "biz_" + Date.now();
+    try {
+      const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await setDoc(doc(window.db, "businesses", id), {
+        id: id, name: name, category: document.getElementById('f-biz-cat').value, pin: pin
       });
+      closeModal('modal-add-biz');
+      document.getElementById('f-biz-name').value=''; document.getElementById('f-biz-pin').value='';
+    } catch(e) { console.error(e); }
+  }
 
-      closeAddStudentModal();
-    };
+  async function delBiz(id) {
+    if(!confirm("Delete store?")) return;
+    try {
+      const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await deleteDoc(doc(window.db, "businesses", id));
+    } catch(e) { console.error(e); }
+  }
 
-    window.filterStudents = () => {
-      const query = document.getElementById('search-student').value.toLowerCase();
-      const filtered = window.allStudentsCache.filter(s => 
-        (s.fullName && s.fullName.toLowerCase().includes(query)) ||
-        (s.studentId && s.studentId.toLowerCase().includes(query))
-      );
-      renderStudents(filtered);
-    };
-  </script>
-
-  <script>
-    function switchTab(tab) {
-      ['students', 'scans', 'businesses', 'redemptions', 'scanner'].forEach(t => {
-        document.getElementById(`view-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).className = 'py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2';
+  async function saveVouch() {
+    const sel = document.getElementById('f-vouch-store');
+    if(sel.selectedIndex <= 0) return alert('Select store');
+    const title = document.getElementById('f-vouch-title').value;
+    if(!title) return alert('Title required');
+    
+    const storeId = sel.options[sel.selectedIndex].value;
+    const storeName = sel.options[sel.selectedIndex].innerText;
+    const id = "vouch_" + Date.now();
+    
+    try {
+      const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await setDoc(doc(window.db, "vouchers", id), {
+        id: id, partnerId: storeId, partnerName: storeName, title: title, 
+        description: document.getElementById('f-vouch-desc').value
       });
-      document.getElementById(`view-${tab}`).classList.remove('hidden');
-      document.getElementById(`tab-${tab}`).className = 'py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2 font-bold';
-    }
+      closeModal('modal-add-vouch');
+      document.getElementById('f-vouch-title').value=''; document.getElementById('f-vouch-desc').value='';
+    } catch(e) { console.error(e); }
+  }
 
-    function openAddStudentModal() {
-      document.getElementById('add-modal').classList.remove('hidden');
-      document.getElementById('add-modal').classList.add('flex');
-    }
+  async function delVouch(id) {
+    if(!confirm("Delete voucher?")) return;
+    try {
+      const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      await deleteDoc(doc(window.db, "vouchers", id));
+    } catch(e) { console.error(e); }
+  }
+</script>
 
-    function closeAddStudentModal() {
-      document.getElementById('add-modal').classList.add('hidden');
-      document.getElementById('add-modal').classList.remove('flex');
-    }
-
-    // Web Scanner Logic
-    let html5QrcodeScanner = null;
-
-    function initScanner() {
-      if (!html5QrcodeScanner) {
-        html5QrcodeScanner = new Html5QrcodeScanner(
-          "reader",
-          { fps: 10, qrbox: {width: 250, height: 250} },
-          /* verbose= */ false);
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-      }
-    }
-
-    async function onScanSuccess(decodedText, decodedResult) {
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.pause(true); // Pause scanning
-      }
-      
-      // Attempt to parse standard student payload (or just assume it's an ID)
-      let studentId = decodedText;
-      try {
-        const json = JSON.parse(decodedText);
-        if (json.studentId) studentId = json.studentId;
-      } catch (e) {}
-
-      document.getElementById('reader').classList.add('hidden');
-      const resDiv = document.getElementById('scan-result');
-      const badge = document.getElementById('scan-badge');
-      const nameEl = document.getElementById('scan-name');
-      const idEl = document.getElementById('scan-id');
-      
-      resDiv.classList.remove('hidden');
-      nameEl.innerText = "Checking...";
-      idEl.innerText = studentId;
-      badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-slate-100 text-slate-800";
-      badge.innerText = "LOADING";
-
-      // Query firestore directly
-      try {
-        const { getDoc, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-        const studentDoc = await getDoc(doc(window.db, "students", studentId));
-        
-        let status = "NOT_FOUND";
-        let studentData = null;
-
-        if (studentDoc.exists()) {
-          studentData = studentDoc.data();
-          if (!studentData.isMembershipPaid) {
-            status = "PAYMENT_PENDING";
-          } else {
-            status = "VALID"; // simplified check
-          }
-        }
-
-        // Display Result
-        if (status === "VALID") {
-          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-emerald-100 text-emerald-800";
-          badge.innerText = "VALID";
-          nameEl.innerText = studentData.fullName;
-        } else if (status === "PAYMENT_PENDING") {
-          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-amber-100 text-amber-800";
-          badge.innerText = "PENDING DUES";
-          nameEl.innerText = studentData.fullName;
-        } else {
-          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-red-100 text-red-800";
-          badge.innerText = "NOT FOUND";
-          nameEl.innerText = "Unregistered Student";
-        }
-
-        // Log it!
-        const logId = Date.now().toString() + "-" + Math.floor(Math.random()*1000);
-        await setDoc(doc(window.db, "scan_logs", logId), {
-          studentId: studentId,
-          studentName: studentData ? studentData.fullName : "Unregistered Student",
-          scannedSemester: studentData ? studentData.activeSemester : "N/A",
-          department: studentData ? studentData.department : "N/A",
-          status: status,
-          scannedAt: Date.now(),
-          notes: "Scanned via Web Scanner"
-        });
-
-      } catch (err) {
-        console.error(err);
-        badge.innerText = "ERROR";
-      }
-    }
-
-    function onScanFailure(error) {
-      // ignore frame failures
-    }
-
-    window.resetScanner = () => {
-      document.getElementById('scan-result').classList.add('hidden');
-      document.getElementById('reader').classList.remove('hidden');
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.resume();
-      }
-    };
-
-    // Override switchTab to init scanner when opened
-    const oldSwitchTab = window.switchTab;
-    window.switchTab = function(tab) {
-      ['students', 'scans', 'businesses', 'redemptions', 'scanner'].forEach(t => {
-        document.getElementById(`view-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).className = 'py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2';
-      });
-      document.getElementById(`view-${tab}`).classList.remove('hidden');
-      document.getElementById(`tab-${tab}`).className = 'py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2 font-bold';
-
-      if (tab === 'scanner') {
-        initScanner();
-      }
-    };
-
-  </script>
 </body>
 </html>
