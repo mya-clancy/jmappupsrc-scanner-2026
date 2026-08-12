@@ -44,10 +44,10 @@
       width: 100%;
       max-width: 680px;
       aspect-ratio: 1.586 / 1;
-      background: linear-gradient(180deg, #3E0101 0%, #1A0000 100%);
+      background: #FFFFFF;
       border-radius: 4cqw;
       box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.7);
-      color: #FFFFFF;
+      color: #0F172A;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -59,7 +59,7 @@
     }
 
     .id-pass-header-banner {
-      background-color: #8C0000;
+      background-color: #FFFFFF;
       border-bottom: 0.8cqw solid #FFC107;
       padding: 2.5cqw 4cqw;
     }
@@ -76,7 +76,7 @@
       font-size: 1.6cqw;
       font-weight: 400;
       letter-spacing: 0.05em;
-      color: #FFFFFF;
+      color: #64748B;
       text-transform: uppercase;
       margin-top: 0.4cqw;
     }
@@ -105,7 +105,7 @@
     .id-pass-label {
       font-size: 1.4cqw;
       letter-spacing: 0.05em;
-      color: #D4AF37;
+      color: #0F172A;
       font-weight: 500;
       text-transform: uppercase;
       margin-bottom: 0.4cqw;
@@ -114,7 +114,7 @@
     .id-pass-val {
       font-size: 2.4cqw;
       font-weight: 500;
-      color: #FFFFFF;
+      color: #334155;
       line-height: 1.2;
     }
 
@@ -124,8 +124,8 @@
       padding: 0.6cqw 1.8cqw;
       border-radius: 0.8cqw;
       border: 0.25cqw solid #10B981;
-      background: transparent;
-      color: #FFFFFF;
+      background: rgba(16, 185, 129, 0.1);
+      color: #10B981;
       font-size: 1.8cqw;
       font-weight: 500;
       width: fit-content;
@@ -134,7 +134,8 @@
 
     .id-pass-badge.pending {
       border-color: #F59E0B;
-      color: #FFFFFF;
+      background: rgba(245, 158, 11, 0.1);
+      color: #F59E0B;
     }
 
     .id-pass-qr-frame {
@@ -156,8 +157,8 @@
     }
 
     .id-pass-qr-box canvas {
-      width: 22cqw !important;
-      height: 22cqw !important;
+      width: 32cqw !important;
+      height: 32cqw !important;
       display: block;
     }
 
@@ -170,10 +171,10 @@
     }
 
     .id-pass-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
       padding: 1.2cqw 4cqw;
       font-size: 1.3cqw;
-      color: rgba(255, 255, 255, 0.6);
+      color: #64748B;
       text-align: left;
       letter-spacing: 0.02em;
       margin-bottom: 0.5cqw;
@@ -581,17 +582,20 @@
 
         <!-- Footer Bar -->
         <div class="id-pass-footer">
-          Polytechnic University of the Philippines • JMAP - PUP Santa Rosa Branch
+          Junior Marketing Association of the Philippines - PUP Santa Rosa
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="flex justify-end gap-3 border-t border-slate-200 dark:border-slate-700/60 pt-4">
-        <button onclick="closeModal('modal-id-card')" class="px-5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard font-bold text-xs hover:bg-slate-200 transition">
+        <button onclick="closeModal('modal-id-card')" class="px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-pup-darkCard font-bold text-xs hover:bg-slate-200 transition">
           Close
         </button>
-        <button onclick="window.print()" class="px-6 py-2.5 rounded-xl bg-pup-gold text-pup-maroon font-black text-xs shadow-md hover:bg-yellow-500 transition flex items-center gap-2">
-          <i class="fa-solid fa-print"></i> Print / Save Member Pass
+        <button onclick="savePassLocal()" class="px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 text-white font-black text-xs shadow-md hover:bg-slate-900 transition flex items-center gap-2">
+          <i class="fa-solid fa-download"></i> Save (JPG)
+        </button>
+        <button id="btn-save-drive" onclick="savePassToDrive()" class="px-5 py-2.5 rounded-xl bg-pup-gold text-pup-maroon font-black text-xs shadow-md hover:bg-yellow-500 transition flex items-center gap-2">
+          <i class="fa-brands fa-google-drive"></i> Save to Drive
         </button>
       </div>
     </div>
@@ -823,6 +827,25 @@
 
   <script>
     window.activeTab = 'roster';
+
+    async function savePassToDrive() {
+        const card = document.getElementById('printable-id-card');
+        const name = document.getElementById('pass-card-name').innerText;
+        const id = document.getElementById('pass-card-id').innerText;
+        const sem = document.getElementById('pass-card-sem').innerText;
+        
+        const filename = formatFilename(name, id, sem);
+
+        try {
+            const dataUrl = await htmlToImage.toJpeg(card, { quality: 0.95, pixelRatio: 2 });
+            // For now, prompt the user that OAuth is required
+            alert("Saving " + filename + " to Google Drive via OAuth is being configured...");
+        } catch (error) {
+            console.error('Oops, something went wrong!', error);
+            alert("Failed to process image for Drive.");
+        }
+    }
+
 
     function formatFilename(name, id, semester) {
         const cleanName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
