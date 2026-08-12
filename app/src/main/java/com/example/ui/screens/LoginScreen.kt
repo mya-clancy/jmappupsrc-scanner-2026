@@ -86,8 +86,8 @@ fun LoginScreen(
     var selectedTabIndex by remember { mutableIntStateOf(0) } // 0 = Admin Login, 1 = Select Partners
 
     // Admin Login State
-    var adminUsername by remember { mutableStateOf("admin") }
-    var adminPassword by remember { mutableStateOf("jmapup") }
+    var adminUsername by remember { mutableStateOf("") }
+    var adminPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var adminErrorMessage by remember { mutableStateOf<String?>(null) }
 

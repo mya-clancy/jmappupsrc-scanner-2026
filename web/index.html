@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JMAP PUP Santa Rosa - Firebase Web Admin Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
@@ -37,7 +38,7 @@
 
   <!-- Navigation Tabs -->
   <div class="bg-white border-b border-slate-200 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 flex space-x-8 text-sm font-semibold">
+    <div class="max-w-7xl mx-auto px-6 flex space-x-8 text-sm font-semibold overflow-x-auto whitespace-nowrap">
       <button onclick="switchTab('students')" id="tab-students" class="py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2">
         <i class="fa-solid fa-users"></i> Student Roster (<span id="student-count">0</span>)
       </button>
@@ -49,6 +50,9 @@
       </button>
       <button onclick="switchTab('redemptions')" id="tab-redemptions" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
         <i class="fa-solid fa-ticket"></i> Voucher Redemptions (<span id="redemption-count">0</span>)
+      </button>
+      <button onclick="switchTab('scanner')" id="tab-scanner" class="py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-camera"></i> Web Scanner
       </button>
     </div>
   </div>
@@ -67,7 +71,7 @@
         </button>
       </div>
 
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
         <table class="w-full text-left text-sm border-collapse">
           <thead>
             <tr class="bg-slate-100 text-slate-600 font-semibold text-xs uppercase border-b border-slate-200">
@@ -90,7 +94,7 @@
 
     <!-- TAB 2: Scan Logs -->
     <section id="view-scans" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
         <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700 flex justify-between items-center">
           <span><i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Realtime Entrance Scan History</span>
           <span class="text-xs font-normal text-slate-500">Auto-updates live from mobile app scans</span>
@@ -127,7 +131,7 @@
 
     <!-- TAB 4: Redemptions -->
     <section id="view-redemptions" class="hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
         <div class="p-4 bg-slate-50 border-b border-slate-200 font-bold text-slate-700">
           <i class="fa-solid fa-gift text-emerald-600 mr-2"></i> Monthly Discount Voucher Usage Logs
         </div>
@@ -148,6 +152,21 @@
       </div>
     </section>
 
+
+    <!-- TAB 5: Web Scanner -->
+    <section id="view-scanner" class="hidden">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto p-6 text-center max-w-lg mx-auto">
+        <h3 class="text-xl font-bold maroon-text mb-2">Web QR Scanner</h3>
+        <p class="text-sm text-slate-500 mb-6">Requesting camera permissions to scan student IDs directly from this device.</p>
+        <div id="reader" class="mx-auto w-full max-w-sm rounded overflow-x-auto shadow-inner border border-slate-300"></div>
+        <div id="scan-result" class="mt-6 hidden">
+          <div id="scan-badge" class="px-4 py-2 rounded-xl text-lg font-bold mb-2"></div>
+          <p id="scan-name" class="font-bold text-slate-800 text-xl"></p>
+          <p id="scan-id" class="text-slate-600 font-mono text-sm"></p>
+          <button onclick="resetScanner()" class="mt-4 px-6 py-2 bg-slate-200 hover:bg-slate-300 rounded-xl font-semibold text-slate-700 transition">Scan Next</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Add Student Modal -->
@@ -206,6 +225,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    window.db = db;
 
     window.allStudentsCache = [];
 
@@ -379,7 +399,7 @@
 
   <script>
     function switchTab(tab) {
-      ['students', 'scans', 'businesses', 'redemptions'].forEach(t => {
+      ['students', 'scans', 'businesses', 'redemptions', 'scanner'].forEach(t => {
         document.getElementById(`view-${t}`).classList.add('hidden');
         document.getElementById(`tab-${t}`).className = 'py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2';
       });
@@ -396,6 +416,121 @@
       document.getElementById('add-modal').classList.add('hidden');
       document.getElementById('add-modal').classList.remove('flex');
     }
+
+    // Web Scanner Logic
+    let html5QrcodeScanner = null;
+
+    function initScanner() {
+      if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5QrcodeScanner(
+          "reader",
+          { fps: 10, qrbox: {width: 250, height: 250} },
+          /* verbose= */ false);
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+      }
+    }
+
+    async function onScanSuccess(decodedText, decodedResult) {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.pause(true); // Pause scanning
+      }
+      
+      // Attempt to parse standard student payload (or just assume it's an ID)
+      let studentId = decodedText;
+      try {
+        const json = JSON.parse(decodedText);
+        if (json.studentId) studentId = json.studentId;
+      } catch (e) {}
+
+      document.getElementById('reader').classList.add('hidden');
+      const resDiv = document.getElementById('scan-result');
+      const badge = document.getElementById('scan-badge');
+      const nameEl = document.getElementById('scan-name');
+      const idEl = document.getElementById('scan-id');
+      
+      resDiv.classList.remove('hidden');
+      nameEl.innerText = "Checking...";
+      idEl.innerText = studentId;
+      badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-slate-100 text-slate-800";
+      badge.innerText = "LOADING";
+
+      // Query firestore directly
+      try {
+        const { getDoc, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+        const studentDoc = await getDoc(doc(window.db, "students", studentId));
+        
+        let status = "NOT_FOUND";
+        let studentData = null;
+
+        if (studentDoc.exists()) {
+          studentData = studentDoc.data();
+          if (!studentData.isMembershipPaid) {
+            status = "PAYMENT_PENDING";
+          } else {
+            status = "VALID"; // simplified check
+          }
+        }
+
+        // Display Result
+        if (status === "VALID") {
+          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-emerald-100 text-emerald-800";
+          badge.innerText = "VALID";
+          nameEl.innerText = studentData.fullName;
+        } else if (status === "PAYMENT_PENDING") {
+          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-amber-100 text-amber-800";
+          badge.innerText = "PENDING DUES";
+          nameEl.innerText = studentData.fullName;
+        } else {
+          badge.className = "px-4 py-2 rounded-xl text-lg font-bold mb-2 bg-red-100 text-red-800";
+          badge.innerText = "NOT FOUND";
+          nameEl.innerText = "Unregistered Student";
+        }
+
+        // Log it!
+        const logId = Date.now().toString() + "-" + Math.floor(Math.random()*1000);
+        await setDoc(doc(window.db, "scan_logs", logId), {
+          studentId: studentId,
+          studentName: studentData ? studentData.fullName : "Unregistered Student",
+          scannedSemester: studentData ? studentData.activeSemester : "N/A",
+          department: studentData ? studentData.department : "N/A",
+          status: status,
+          scannedAt: Date.now(),
+          notes: "Scanned via Web Scanner"
+        });
+
+      } catch (err) {
+        console.error(err);
+        badge.innerText = "ERROR";
+      }
+    }
+
+    function onScanFailure(error) {
+      // ignore frame failures
+    }
+
+    window.resetScanner = () => {
+      document.getElementById('scan-result').classList.add('hidden');
+      document.getElementById('reader').classList.remove('hidden');
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.resume();
+      }
+    };
+
+    // Override switchTab to init scanner when opened
+    const oldSwitchTab = window.switchTab;
+    window.switchTab = function(tab) {
+      ['students', 'scans', 'businesses', 'redemptions', 'scanner'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).className = 'py-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2';
+      });
+      document.getElementById(`view-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).className = 'py-4 border-b-2 border-red-800 text-red-900 flex items-center gap-2 font-bold';
+
+      if (tab === 'scanner') {
+        initScanner();
+      }
+    };
+
   </script>
 </body>
 </html>
